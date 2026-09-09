@@ -13,15 +13,18 @@ interface Props {
   skinTone: string;
   /** brief pop-in scale animation (UX §9) */
   popIn?: boolean;
+  /** parts for these sockets are not mounted (body parts covered by gear) */
+  hideSockets?: ReadonlySet<string>;
 }
 
-export function ItemMount({ baked, palette, override, skinTone, popIn }: Props) {
+export function ItemMount({ baked, palette, override, skinTone, popIn, hideSockets }: Props) {
   const sockets = useSockets();
   const set = useMemo(() => new MaterialSet(), []);
 
   useEffect(() => {
     const mounted: Array<{ parent: Object3D; obj: Object3D }> = [];
     for (const part of baked.parts) {
+      if (hideSockets?.has(part.socket)) continue;
       const obj = part.object.clone();
       set.apply(obj);
       const parent = sockets[part.socket];
@@ -35,7 +38,7 @@ export function ItemMount({ baked, palette, override, skinTone, popIn }: Props) 
     return () => {
       for (const m of mounted) m.parent.remove(m.obj);
     };
-  }, [baked, sockets, set, popIn]);
+  }, [baked, sockets, set, popIn, hideSockets]);
 
   useEffect(() => {
     set.update({ palette, override, skinTone });

@@ -127,6 +127,13 @@ export function CharacterRig() {
     [character.body.sex],
   );
   const hidden = useMemo(() => hiddenSlots(loadout), [loadout]);
+  // gear that models the whole extremity replaces the body part underneath (RigCheck: slim gloves let the fist through)
+  const coveredBodySockets = useMemo(() => {
+    const set = new Set<string>();
+    if (loadout.gloves && !hidden.has('gloves')) set.add('handL').add('handR');
+    if (loadout.boots && !hidden.has('boots')) set.add('footL').add('footR');
+    return set;
+  }, [loadout.gloves, loadout.boots, hidden]);
   // items mounted after the first settle pop in (UX §9); the initial loadout does not
   const [settled, setSettled] = useState(false);
   useEffect(() => {
@@ -138,7 +145,12 @@ export function CharacterRig() {
   return (
     <group ref={root} name="character">
       <SocketsContext.Provider value={sockets}>
-        <ItemMount baked={body} palette={character.palette} skinTone={character.body.skinTone} />
+        <ItemMount
+          baked={body}
+          palette={character.palette}
+          skinTone={character.body.skinTone}
+          hideSockets={coveredBodySockets}
+        />
         {SLOT_IDS.map((slot) => {
           const id = loadout[slot];
           if (!id || hidden.has(slot)) return null;

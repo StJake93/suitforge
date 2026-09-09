@@ -14,7 +14,7 @@ import {
 } from './types';
 
 export const LIMITS = {
-  maxMeshesPerItem: 24,
+  maxMeshesPerItem: 28,
   maxTrianglesPerPart: 6000,
   maxTrianglesPerItem: 10000,
   maxNameLength: 24,

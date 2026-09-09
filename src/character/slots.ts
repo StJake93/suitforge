@@ -116,7 +116,7 @@ export const SLOTS: Record<SlotId, SlotMeta> = {
     allowEmpty: true,
     paired: true,
     sockets: ['forearmL', 'forearmR'],
-    focus: { y: 0.55, dist: 1.9, polar: 75 },
+    focus: { y: 0.47, dist: 2.1, polar: 75 },
     hint: 'Forearm guards and gauntlet cuffs',
   },
   gloves: {
@@ -125,7 +125,7 @@ export const SLOTS: Record<SlotId, SlotMeta> = {
     allowEmpty: true,
     paired: true,
     sockets: ['handL', 'handR'],
-    focus: { y: 0.55, dist: 1.9, polar: 75 },
+    focus: { y: 0.47, dist: 2.1, polar: 75 },
     hint: 'Gauntlets and grips',
   },
   weapon: {
@@ -134,7 +134,7 @@ export const SLOTS: Record<SlotId, SlotMeta> = {
     allowEmpty: true,
     paired: false,
     sockets: ['weapon', 'handL'],
-    focus: { y: 0.55, dist: 1.9, polar: 75 },
+    focus: { y: 0.47, dist: 2.1, polar: 75 },
     hint: 'One- and two-handed',
   },
   legs: {

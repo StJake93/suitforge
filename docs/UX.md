@@ -107,7 +107,7 @@ Per slot: target height as a fraction of body height, and distance in metres (sc
 | helmet, headgear, glasses | 0.93                        | 1.25     |
 | neck                      | 0.86                        | 1.35     |
 | torso, back               | 0.70                        | 2.0      |
-| bracers, gloves, weapon   | 0.55                        | 1.9      |
+| bracers, gloves, weapon   | 0.47                        | 2.1      |
 | legs                      | 0.35                        | 2.1      |
 | boots                     | 0.08                        | 1.5      |
 | full body                 | 0.50                        | 4.3      |

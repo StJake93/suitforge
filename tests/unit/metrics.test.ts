@@ -37,7 +37,7 @@ describe('computeMetrics (R-CHAR-04, R-CHAR-05, ASSET_CONTRACT §3)', () => {
     expect(heavy.chestDepth).toBeGreaterThan(slim.chestDepth);
   });
 
-  it('female body has narrower shoulders, wider hips and a bust; same gear sockets', () => {
+  it('female body has narrower shoulders and wider hips; same gear sockets', () => {
     const f = computeMetrics(body({ sex: 'female' }));
     expect(f.shoulderHalf).toBeLessThan(REF.shoulderHalf);
     expect(f.pelvisHalfW).toBeGreaterThan(REF.pelvisHalfW);

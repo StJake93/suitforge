@@ -31,7 +31,7 @@ Rules:
 - `build` is pure: no side effects, no globals, no async, no texture/network loads. It is called once per item and cached; it must run in Node (vitest) as well as the browser, so use `three` classes only, never DOM.
 - Return one part per socket the item attaches to. Paired slots return both sides (§3.3).
 - Never create materials: call `ctx.mat(role)`. This is how palette changes recolour instantly.
-- Budgets: ≤ 24 meshes per item, ≤ 6 000 triangles per part, ≤ 10 000 per item. Meshes are merged per material role per part at mount time, so draw calls depend on roles used, not mesh count. Use `kit` primitives; low-poly, flat-shaded silhouettes read better than detail.
+- Budgets: ≤ 28 meshes per item, ≤ 6 000 triangles per part, ≤ 10 000 per item. Meshes are merged per material role per part at mount time, so draw calls depend on roles used, not mesh count. Use `kit` primitives; low-poly, flat-shaded silhouettes read better than detail.
 
 ## 2. Coordinate conventions
 
@@ -43,20 +43,20 @@ Rules:
 
 Socket origin/axes are defined for the reference body. `scale` describes what the runtime scales along each axis so authors know what stretches.
 
-| Socket        | Origin                                                                 | Axes                                                                  | Runtime scale                                      |
-| ------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------- |
-| `head`        | centre of the skull                                                    | +Y up, +Z face                                                        | uniform: head radius                               |
-| `neck`        | base of the neck (top of shoulders)                                    | +Y up                                                                 | x,z: neck radius; y: neck length                   |
-| `chest`       | centre of the torso at nipple height                                   | +Y up, +Z front                                                       | x: shoulder width; y: torso length; z: chest depth |
-| `back`        | same as `chest` but origin on the back surface, +Z points **backward** |                                                                       | x: shoulder width; y: torso length; z: uniform     |
-| `pelvis`      | centre of the hips                                                     | +Y up                                                                 | x: hip width; y,z: uniform                         |
-| `upperArmL/R` | shoulder joint                                                         | +Y **down the limb** toward the elbow                                 | y: segment length; x,z: limb radius                |
-| `forearmL/R`  | elbow joint                                                            | +Y down toward the wrist                                              | y: segment length; x,z: limb radius                |
-| `handL/R`     | wrist joint                                                            | +Y toward fingertips, +Z palm-forward                                 | uniform: hand size                                 |
-| `weapon`      | right palm grip point                                                  | +Y along the weapon's long axis (blade/barrel), +Z away from the palm | uniform: hand size                                 |
-| `thighL/R`    | hip joint                                                              | +Y down toward the knee                                               | y: length; x,z: radius                             |
-| `shinL/R`     | knee joint                                                             | +Y down toward the ankle                                              | y: length; x,z: radius                             |
-| `footL/R`     | ankle joint                                                            | +Y **up**, +Z toward toes; the sole is at `y = -REF.footH`            | uniform: foot size                                 |
+| Socket        | Origin                                                                 | Axes                                                                  | Runtime scale                                                            |
+| ------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `head`        | centre of the skull                                                    | +Y up, +Z face                                                        | uniform: head radius                                                     |
+| `neck`        | base of the neck (top of shoulders)                                    | +Y up                                                                 | x,z: neck radius; y: neck length                                         |
+| `chest`       | centre of the torso at nipple height                                   | +Y up, +Z front                                                       | x: shoulder width; y: torso length; z: chest depth                       |
+| `back`        | same as `chest` but origin on the back surface, +Z points **backward** |                                                                       | x: shoulder width; y: torso length; z: uniform                           |
+| `pelvis`      | centre of the hips                                                     | +Y up                                                                 | x: hip width; y,z: uniform                                               |
+| `upperArmL/R` | shoulder joint                                                         | +Y **down the limb** toward the elbow                                 | y: segment length; x,z: limb radius                                      |
+| `forearmL/R`  | elbow joint                                                            | +Y down toward the wrist                                              | y: segment length; x,z: limb radius                                      |
+| `handL/R`     | wrist joint                                                            | +Y toward fingertips, +Z palm-forward                                 | y: hand size; x,z: max(hand size, forearm radius) so cuffs clear sleeves |
+| `weapon`      | right palm grip point                                                  | +Y along the weapon's long axis (blade/barrel), +Z away from the palm | uniform: hand size                                                       |
+| `thighL/R`    | hip joint                                                              | +Y down toward the knee                                               | y: length; x,z: radius                                                   |
+| `shinL/R`     | knee joint                                                             | +Y down toward the ankle                                              | y: length; x,z: radius                                                   |
+| `footL/R`     | ankle joint                                                            | +Y **up**, +Z toward toes; the sole is at `y = -REF.footH`            | y: foot size; x,z: max(foot size, shin radius) so shafts clear the shin  |
 
 Reference dimensions are exported as `REF` from `src/character/metrics.ts` (e.g. `REF.headRadius`, `REF.forearmLength`) so authors can size parts numerically.
 
@@ -83,6 +83,14 @@ Reference dimensions are exported as `REF` from `src/character/metrics.ts` (e.g.
 ### 3.3 Paired slots
 
 Return both parts. Use `kit.mirror(buildOneSide)`: it builds the right side and produces the left by cloning with `scale.x = -1` (the renderer handles winding). Author the **right** side.
+
+### 3.4 Covered body parts
+
+When a `gloves` item is equipped the body's hand parts are not rendered, and when a `boots` item is equipped the body's foot parts are not rendered. Gloves and boots must therefore model the **whole** hand or foot (fingers/fist, sole, toe), never just a cuff. All other slots render on top of the body.
+
+### 3.5 Sex-agnostic authoring
+
+Items are built once against the male reference body and adapted per sex only through socket scale. The base body therefore carries **no bust geometry** (it would clip through every chest plate); the female silhouette comes from shoulder, waist and hip proportions. If a sex-aware chest layer is wanted later it must be an engine feature (a body part hidden by items that cover it), not an item concern.
 
 ## 4. Material roles
 

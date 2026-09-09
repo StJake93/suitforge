@@ -189,6 +189,9 @@ export function computeMetrics(body: Body, pose: PoseBlend = HERO): BodyMetrics 
 
   // socket scales are ratios against REF; REF itself is computed with ratios of 1 (see below)
   const r = REF_PROPS;
+  // cuffs must stay outside the adjoining limb at heavy builds: widen hands/feet with the forearm/shin radius
+  const handXZ = Math.max(p.handSize / r.handSize, p.forearmR / r.forearmR);
+  const footXZ = Math.max(footLen / r.footLen, p.shinR / r.shinR);
   const sockets: Record<SocketId, SocketTransform> = {
     head: {
       position: new Vector3(0, headCenterY, 0),
@@ -238,12 +241,12 @@ export function computeMetrics(body: Body, pose: PoseBlend = HERO): BodyMetrics 
     handL: {
       position: sol.L.wrist,
       quaternion: handQL,
-      scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize),
+      scale: scale(handXZ, p.handSize / r.handSize, handXZ),
     },
     handR: {
       position: sol.R.wrist,
       quaternion: handQR,
-      scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize),
+      scale: scale(handXZ, p.handSize / r.handSize, handXZ),
     },
     weapon: {
       position: sol.grip,
@@ -273,12 +276,12 @@ export function computeMetrics(body: Body, pose: PoseBlend = HERO): BodyMetrics 
     footL: {
       position: ankleL,
       quaternion: toeOutL,
-      scale: scale(footLen / r.footLen, footLen / r.footLen, footLen / r.footLen),
+      scale: scale(footXZ, footLen / r.footLen, footXZ),
     },
     footR: {
       position: ankleR,
       quaternion: toeOutR,
-      scale: scale(footLen / r.footLen, footLen / r.footLen, footLen / r.footLen),
+      scale: scale(footXZ, footLen / r.footLen, footXZ),
     },
   };
 

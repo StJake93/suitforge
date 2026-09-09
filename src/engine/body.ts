@@ -64,11 +64,9 @@ export function buildBody(sex: Sex): ItemBuild {
     0,
   );
   const chestParts = [chest, upper, abdomen];
-  if (f) {
-    const b = r.hu * 0.2;
-    chestParts.push(kit.at(kit.mesh(kit.sphere(b, 12), skin), cw * 0.22, cl * 0.18, cd * 0.38));
-    chestParts.push(kit.at(kit.mesh(kit.sphere(b, 12), skin), -cw * 0.22, cl * 0.18, cd * 0.38));
-  }
+  // No bust geometry: every torso item covers the chest and items are authored sex-agnostic, so a bust
+  // would only ever clip through plates (RigCheck 2026-09-09). The female read comes from proportions.
+  void f;
   const chestGroup = kit.group(...chestParts);
 
   const pelvis = kit.at(
