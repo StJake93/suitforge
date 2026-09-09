@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "unicorn"],
+  "rules": {
+    "no-unused-vars": "error",
+    "typescript/no-explicit-any": "error",
+    "react/exhaustive-deps": "warn",
+    "react/rules-of-hooks": "error",
+    "react/immutability": "off",
+    "react/refs": "off"
+  },
+  "ignorePatterns": ["dist", "node_modules", "playwright-report", "test-results"]
+}

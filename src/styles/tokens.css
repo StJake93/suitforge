@@ -1,0 +1,57 @@
+/* UX §2 — the only place colours, sizes and motion are defined. */
+:root {
+  color-scheme: dark;
+  --bg: #0b0e14;
+  --bg-2: #141926;
+  --surface: rgba(18, 22, 31, 0.74);
+  --surface-2: rgba(30, 35, 48, 0.9);
+  --surface-solid: #161b26;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #e8ecf3;
+  --text-2: #98a0b3;
+  --text-3: #5d6576;
+  --accent: #5ee1ff;
+  --accent-soft: rgba(94, 225, 255, 0.14);
+  --accent-line: rgba(94, 225, 255, 0.45);
+  --danger: #ff5e7a;
+  --success: #7dff9b;
+  --locked: #ffc857;
+  --locked-soft: rgba(255, 200, 87, 0.14);
+
+  --r-panel: 12px;
+  --r-card: 8px;
+  --r-pill: 999px;
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+
+  --font: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 15px;
+  --fs-lg: 20px;
+  --fs-xl: 28px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --t-fast: 120ms;
+  --t-med: 200ms;
+
+  --rail-w: 232px;
+  --drawer-w: 360px;
+  --topbar-h: 56px;
+  --panel-w: 300px;
+  --blur: blur(14px);
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --focus: 0 0 0 2px var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 0ms;
+    --t-med: 0ms;
+  }
+}
