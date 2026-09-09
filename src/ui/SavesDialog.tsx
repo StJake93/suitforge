@@ -60,7 +60,13 @@ function SavesDialogInner() {
 
   return (
     <div className="backdrop" onClick={close}>
-      <div className="dialog" role="dialog" aria-label="Saved heroes" onClick={(e) => e.stopPropagation()} data-testid="saves-dialog">
+      <div
+        className="dialog"
+        role="dialog"
+        aria-label="Saved heroes"
+        onClick={(e) => e.stopPropagation()}
+        data-testid="saves-dialog"
+      >
         <div className="panel-head">
           <div className="panel-title">Saved heroes</div>
           <button className="icon-btn" aria-label="Close" onClick={close}>
@@ -70,7 +76,13 @@ function SavesDialogInner() {
         <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div style={{ display: 'flex', gap: 8 }}>
             <label className="field" style={{ flex: 1 }}>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Save name" aria-label="Save name" onKeyDown={(e) => e.key === 'Enter' && onSave()} />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Save name"
+                aria-label="Save name"
+                onKeyDown={(e) => e.key === 'Enter' && onSave()}
+              />
             </label>
             <button className="btn primary" onClick={onSave} data-testid="save-current">
               <I.save /> Save current
@@ -120,13 +132,28 @@ function SavesDialogInner() {
                   </>
                 ) : (
                   <>
-                    <button className="icon-btn" aria-label={`Load ${e.name}`} title="Load" onClick={() => onLoad(e)}>
+                    <button
+                      className="icon-btn"
+                      aria-label={`Load ${e.name}`}
+                      title="Load"
+                      onClick={() => onLoad(e)}
+                    >
                       <I.load />
                     </button>
-                    <button className="icon-btn" aria-label={`Rename ${e.name}`} title="Rename" onClick={() => setRenaming({ id: e.id, name: e.name })}>
+                    <button
+                      className="icon-btn"
+                      aria-label={`Rename ${e.name}`}
+                      title="Rename"
+                      onClick={() => setRenaming({ id: e.id, name: e.name })}
+                    >
                       <I.edit />
                     </button>
-                    <button className="icon-btn" aria-label={`Delete ${e.name}`} title="Delete" onClick={() => setConfirm(e.id)}>
+                    <button
+                      className="icon-btn"
+                      aria-label={`Delete ${e.name}`}
+                      title="Delete"
+                      onClick={() => setConfirm(e.id)}
+                    >
                       <I.trash />
                     </button>
                   </>

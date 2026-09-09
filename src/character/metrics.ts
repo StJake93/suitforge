@@ -157,10 +157,26 @@ export function computeMetrics(body: Body, pose: PoseBlend = HERO): BodyMetrics 
   const stance = p.hipHalf * 1.35;
   const ankleL = new Vector3(stance, ankleY, 0.02 * hu);
   const ankleR = new Vector3(-stance, ankleY, 0.02 * hu);
-  const kneeL = hipL.clone().lerp(ankleL, thighLen / (thighLen + shinLen)).add(new Vector3(0, 0, 0.03 * hu));
-  const kneeR = hipR.clone().lerp(ankleR, thighLen / (thighLen + shinLen)).add(new Vector3(0, 0, 0.03 * hu));
+  const kneeL = hipL
+    .clone()
+    .lerp(ankleL, thighLen / (thighLen + shinLen))
+    .add(new Vector3(0, 0, 0.03 * hu));
+  const kneeR = hipR
+    .clone()
+    .lerp(ankleR, thighLen / (thighLen + shinLen))
+    .add(new Vector3(0, 0, 0.03 * hu));
 
-  const rig = { hu, shoulderL, shoulderR, upperArmLen, forearmLen, handLen, chestY, chestDepth: p.chestDepth, hipY };
+  const rig = {
+    hu,
+    shoulderL,
+    shoulderR,
+    upperArmLen,
+    forearmLen,
+    handLen,
+    chestY,
+    chestDepth: p.chestDepth,
+    hipY,
+  };
   let sol: PoseSolution = solvePose(rig, pose.from);
   if (pose.to !== pose.from && pose.t > 0) sol = blendPose(sol, solvePose(rig, pose.to), pose.t, rig);
 
@@ -174,24 +190,96 @@ export function computeMetrics(body: Body, pose: PoseBlend = HERO): BodyMetrics 
   // socket scales are ratios against REF; REF itself is computed with ratios of 1 (see below)
   const r = REF_PROPS;
   const sockets: Record<SocketId, SocketTransform> = {
-    head: { position: new Vector3(0, headCenterY, 0), quaternion: new Quaternion(), scale: scale(p.headRadius / r.headRadius, p.headRadius / r.headRadius, p.headRadius / r.headRadius) },
-    neck: { position: new Vector3(0, neckBaseY, 0), quaternion: new Quaternion(), scale: scale(p.neckRadius / r.neckRadius, neckLen / r.neckLen, p.neckRadius / r.neckRadius) },
-    chest: { position: new Vector3(0, chestY, 0), quaternion: new Quaternion(), scale: scale(p.shoulderHalf / r.shoulderHalf, chestLen / r.chestLen, p.chestDepth / r.chestDepth) },
-    back: { position: new Vector3(0, chestY, -p.chestDepth * 0.5), quaternion: back, scale: scale(p.shoulderHalf / r.shoulderHalf, chestLen / r.chestLen, hu / r.hu) },
-    pelvis: { position: new Vector3(0, pelvisY, 0), quaternion: new Quaternion(), scale: scale(p.pelvisHalfW / r.pelvisHalfW, hu / r.hu, p.pelvisDepth / r.pelvisDepth) },
-    upperArmL: { position: shoulderL, quaternion: dirQuat(shoulderL, sol.L.elbow), scale: scale(p.upperArmR / r.upperArmR, upperArmLen / r.upperArmLen, p.upperArmR / r.upperArmR) },
-    upperArmR: { position: shoulderR, quaternion: dirQuat(shoulderR, sol.R.elbow), scale: scale(p.upperArmR / r.upperArmR, upperArmLen / r.upperArmLen, p.upperArmR / r.upperArmR) },
-    forearmL: { position: sol.L.elbow, quaternion: dirQuat(sol.L.elbow, sol.L.wrist), scale: scale(p.forearmR / r.forearmR, forearmLen / r.forearmLen, p.forearmR / r.forearmR) },
-    forearmR: { position: sol.R.elbow, quaternion: dirQuat(sol.R.elbow, sol.R.wrist), scale: scale(p.forearmR / r.forearmR, forearmLen / r.forearmLen, p.forearmR / r.forearmR) },
-    handL: { position: sol.L.wrist, quaternion: handQL, scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize) },
-    handR: { position: sol.R.wrist, quaternion: handQR, scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize) },
-    weapon: { position: sol.grip, quaternion: sol.weapon, scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize) },
-    thighL: { position: hipL, quaternion: dirQuat(hipL, kneeL), scale: scale(p.thighR / r.thighR, thighLen / r.thighLen, p.thighR / r.thighR) },
-    thighR: { position: hipR, quaternion: dirQuat(hipR, kneeR), scale: scale(p.thighR / r.thighR, thighLen / r.thighLen, p.thighR / r.thighR) },
-    shinL: { position: kneeL, quaternion: dirQuat(kneeL, ankleL), scale: scale(p.shinR / r.shinR, shinLen / r.shinLen, p.shinR / r.shinR) },
-    shinR: { position: kneeR, quaternion: dirQuat(kneeR, ankleR), scale: scale(p.shinR / r.shinR, shinLen / r.shinLen, p.shinR / r.shinR) },
-    footL: { position: ankleL, quaternion: toeOutL, scale: scale(footLen / r.footLen, footLen / r.footLen, footLen / r.footLen) },
-    footR: { position: ankleR, quaternion: toeOutR, scale: scale(footLen / r.footLen, footLen / r.footLen, footLen / r.footLen) },
+    head: {
+      position: new Vector3(0, headCenterY, 0),
+      quaternion: new Quaternion(),
+      scale: scale(p.headRadius / r.headRadius, p.headRadius / r.headRadius, p.headRadius / r.headRadius),
+    },
+    neck: {
+      position: new Vector3(0, neckBaseY, 0),
+      quaternion: new Quaternion(),
+      scale: scale(p.neckRadius / r.neckRadius, neckLen / r.neckLen, p.neckRadius / r.neckRadius),
+    },
+    chest: {
+      position: new Vector3(0, chestY, 0),
+      quaternion: new Quaternion(),
+      scale: scale(p.shoulderHalf / r.shoulderHalf, chestLen / r.chestLen, p.chestDepth / r.chestDepth),
+    },
+    back: {
+      position: new Vector3(0, chestY, -p.chestDepth * 0.5),
+      quaternion: back,
+      scale: scale(p.shoulderHalf / r.shoulderHalf, chestLen / r.chestLen, hu / r.hu),
+    },
+    pelvis: {
+      position: new Vector3(0, pelvisY, 0),
+      quaternion: new Quaternion(),
+      scale: scale(p.pelvisHalfW / r.pelvisHalfW, hu / r.hu, p.pelvisDepth / r.pelvisDepth),
+    },
+    upperArmL: {
+      position: shoulderL,
+      quaternion: dirQuat(shoulderL, sol.L.elbow),
+      scale: scale(p.upperArmR / r.upperArmR, upperArmLen / r.upperArmLen, p.upperArmR / r.upperArmR),
+    },
+    upperArmR: {
+      position: shoulderR,
+      quaternion: dirQuat(shoulderR, sol.R.elbow),
+      scale: scale(p.upperArmR / r.upperArmR, upperArmLen / r.upperArmLen, p.upperArmR / r.upperArmR),
+    },
+    forearmL: {
+      position: sol.L.elbow,
+      quaternion: dirQuat(sol.L.elbow, sol.L.wrist),
+      scale: scale(p.forearmR / r.forearmR, forearmLen / r.forearmLen, p.forearmR / r.forearmR),
+    },
+    forearmR: {
+      position: sol.R.elbow,
+      quaternion: dirQuat(sol.R.elbow, sol.R.wrist),
+      scale: scale(p.forearmR / r.forearmR, forearmLen / r.forearmLen, p.forearmR / r.forearmR),
+    },
+    handL: {
+      position: sol.L.wrist,
+      quaternion: handQL,
+      scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize),
+    },
+    handR: {
+      position: sol.R.wrist,
+      quaternion: handQR,
+      scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize),
+    },
+    weapon: {
+      position: sol.grip,
+      quaternion: sol.weapon,
+      scale: scale(p.handSize / r.handSize, p.handSize / r.handSize, p.handSize / r.handSize),
+    },
+    thighL: {
+      position: hipL,
+      quaternion: dirQuat(hipL, kneeL),
+      scale: scale(p.thighR / r.thighR, thighLen / r.thighLen, p.thighR / r.thighR),
+    },
+    thighR: {
+      position: hipR,
+      quaternion: dirQuat(hipR, kneeR),
+      scale: scale(p.thighR / r.thighR, thighLen / r.thighLen, p.thighR / r.thighR),
+    },
+    shinL: {
+      position: kneeL,
+      quaternion: dirQuat(kneeL, ankleL),
+      scale: scale(p.shinR / r.shinR, shinLen / r.shinLen, p.shinR / r.shinR),
+    },
+    shinR: {
+      position: kneeR,
+      quaternion: dirQuat(kneeR, ankleR),
+      scale: scale(p.shinR / r.shinR, shinLen / r.shinLen, p.shinR / r.shinR),
+    },
+    footL: {
+      position: ankleL,
+      quaternion: toeOutL,
+      scale: scale(footLen / r.footLen, footLen / r.footLen, footLen / r.footLen),
+    },
+    footR: {
+      position: ankleR,
+      quaternion: toeOutR,
+      scale: scale(footLen / r.footLen, footLen / r.footLen, footLen / r.footLen),
+    },
   };
 
   return {

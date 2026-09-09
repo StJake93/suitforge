@@ -34,14 +34,25 @@ export function ItemDrawer() {
   const availableTags = useMemo(() => TAGS.filter((t) => all.some((i) => i.tags.includes(t))), [all]);
   const items = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return all.filter((i) => (!q || i.name.toLowerCase().includes(q) || i.tags.some((t) => t.includes(q))) && tags.every((t) => i.tags.includes(t)));
+    return all.filter(
+      (i) =>
+        (!q || i.name.toLowerCase().includes(q) || i.tags.some((t) => t.includes(q))) &&
+        tags.every((t) => i.tags.includes(t)),
+    );
   }, [all, search, tags]);
 
-  const toggleTag = (t: Tag) => setUi({ tags: tags.includes(t) ? tags.filter((x) => x !== t) : [...tags, t] });
+  const toggleTag = (t: Tag) =>
+    setUi({ tags: tags.includes(t) ? tags.filter((x) => x !== t) : [...tags, t] });
   const override = slot ? character.overrides[slot] : undefined;
 
   return (
-    <aside className={`drawer panel${slot ? ' open' : ''}`} aria-label="Item library" aria-hidden={!slot} data-testid="drawer" onPointerLeave={clearPreview}>
+    <aside
+      className={`drawer panel${slot ? ' open' : ''}`}
+      aria-label="Item library"
+      aria-hidden={!slot}
+      data-testid="drawer"
+      onPointerLeave={clearPreview}
+    >
       {meta && slot && (
         <>
           <div className="panel-head">
@@ -55,24 +66,38 @@ export function ItemDrawer() {
           <div className="drawer-tools">
             <label className="field">
               <I.search width={16} height={16} />
-              <input data-drawer-search type="search" placeholder={`Search ${meta.label.toLowerCase()}…`} value={search} onChange={(e) => setUi({ search: e.target.value })} aria-label="Search items" />
+              <input
+                data-drawer-search
+                type="search"
+                placeholder={`Search ${meta.label.toLowerCase()}…`}
+                value={search}
+                onChange={(e) => setUi({ search: e.target.value })}
+                aria-label="Search items"
+              />
             </label>
             {availableTags.length > 1 && (
               <div className="chips" role="group" aria-label="Filter by tag">
                 {availableTags.map((t) => (
-                  <button key={t} className="chip" aria-pressed={tags.includes(t)} onClick={() => toggleTag(t)}>
+                  <button
+                    key={t}
+                    className="chip"
+                    aria-pressed={tags.includes(t)}
+                    onClick={() => toggleTag(t)}
+                  >
                     {t}
                   </button>
                 ))}
               </div>
             )}
           </div>
-          <div className="drawer-grid" role="list" data-testid="drawer-grid">
+          <div className="drawer-grid" data-testid="drawer-grid">
             {meta.allowEmpty && !search && tags.length === 0 && (
               <ItemCard
                 item={null}
                 equipped={character.loadout[slot] === null}
-                previewing={preview?.slot === slot && preview.itemId === null && character.loadout[slot] !== null}
+                previewing={
+                  preview?.slot === slot && preview.itemId === null && character.loadout[slot] !== null
+                }
                 palette={character.palette}
                 skinTone={character.body.skinTone}
                 onPreview={(id) => setPreview(slot, id)}
@@ -85,7 +110,9 @@ export function ItemDrawer() {
                 key={item.id}
                 item={item}
                 equipped={character.loadout[slot] === item.id}
-                previewing={preview?.slot === slot && preview.itemId === item.id && character.loadout[slot] !== item.id}
+                previewing={
+                  preview?.slot === slot && preview.itemId === item.id && character.loadout[slot] !== item.id
+                }
                 palette={character.palette}
                 override={override}
                 skinTone={character.body.skinTone}
@@ -99,7 +126,11 @@ export function ItemDrawer() {
           <div className="drawer-foot">
             <label className="body-row">
               <span className="label">Colour override for {meta.label}</span>
-              <input type="checkbox" checked={!!override} onChange={(e) => setOverride(slot, e.target.checked ? { ...character.palette } : null)} />
+              <input
+                type="checkbox"
+                checked={!!override}
+                onChange={(e) => setOverride(slot, e.target.checked ? { ...character.palette } : null)}
+              />
             </label>
             {override && (
               <div className="palette-roles">
@@ -107,7 +138,15 @@ export function ItemDrawer() {
                   <label key={role} className="role-swatch">
                     <span className="dot" style={{ background: override[role] ?? character.palette[role] }} />
                     <span>{label}</span>
-                    <input type="color" value={override[role] ?? character.palette[role]} aria-label={`${label} override`} onInput={(e) => setOverride(slot, { [role]: (e.target as HTMLInputElement).value }, false)} onChange={(e) => setOverride(slot, { [role]: e.target.value }, true)} />
+                    <input
+                      type="color"
+                      value={override[role] ?? character.palette[role]}
+                      aria-label={`${label} override`}
+                      onInput={(e) =>
+                        setOverride(slot, { [role]: (e.target as HTMLInputElement).value }, false)
+                      }
+                      onChange={(e) => setOverride(slot, { [role]: e.target.value }, true)}
+                    />
                   </label>
                 ))}
               </div>

@@ -9,7 +9,8 @@ export const HISTORY_LIMIT = 120;
 export const emptyHistory = <T>(): History<T> => ({ past: [], future: [] });
 
 export function push<T>(h: History<T>, snapshot: T): History<T> {
-  const past = h.past.length >= HISTORY_LIMIT ? h.past.slice(h.past.length - HISTORY_LIMIT + 1) : h.past.slice();
+  const past =
+    h.past.length >= HISTORY_LIMIT ? h.past.slice(h.past.length - HISTORY_LIMIT + 1) : h.past.slice();
   past.push(snapshot);
   return { past, future: [] };
 }

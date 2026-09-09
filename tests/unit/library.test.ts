@@ -21,7 +21,8 @@ describe('library contract (R-LIB-01, R-LIB-03)', () => {
     expect(nonCount).toEqual([]);
     for (const slot of SLOT_IDS) {
       const n = registry.bySlot(slot).length;
-      if (n < LIMITS.minItemsPerSlot) console.warn(`slot ${slot}: ${n}/${LIMITS.minItemsPerSlot} items (R-LIB-01 not yet met)`);
+      if (n < LIMITS.minItemsPerSlot)
+        console.warn(`slot ${slot}: ${n}/${LIMITS.minItemsPerSlot} items (R-LIB-01 not yet met)`);
     }
   });
 });

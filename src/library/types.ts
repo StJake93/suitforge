@@ -5,11 +5,37 @@ import type { SlotId } from '@/character/types';
 import type { Kit } from './kit';
 
 export type MaterialRole = 'primary' | 'secondary' | 'accent' | 'metal' | 'dark' | 'glass' | 'glow' | 'skin';
-export const MATERIAL_ROLES: readonly MaterialRole[] = ['primary', 'secondary', 'accent', 'metal', 'dark', 'glass', 'glow', 'skin'];
+export const MATERIAL_ROLES: readonly MaterialRole[] = [
+  'primary',
+  'secondary',
+  'accent',
+  'metal',
+  'dark',
+  'glass',
+  'glow',
+  'skin',
+];
 
 export const TAGS = [
-  'tech', 'armour', 'stealth', 'mystic', 'cosmic', 'nature', 'retro', 'heavy', 'light', 'elegant', 'brutal',
-  'ranged', 'melee', 'energy', 'flight', 'utility', 'visor', 'full-face', 'open-face',
+  'tech',
+  'armour',
+  'stealth',
+  'mystic',
+  'cosmic',
+  'nature',
+  'retro',
+  'heavy',
+  'light',
+  'elegant',
+  'brutal',
+  'ranged',
+  'melee',
+  'energy',
+  'flight',
+  'utility',
+  'visor',
+  'full-face',
+  'open-face',
 ] as const;
 export type Tag = (typeof TAGS)[number];
 

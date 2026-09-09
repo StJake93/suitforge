@@ -22,7 +22,11 @@ export interface LoadResult {
 }
 
 /** Resolve an item id through the legacy map; returns undefined if unknown. */
-export function resolveItemId(id: string | null, slot: SlotId, registry: LookupRegistry): string | null | undefined {
+export function resolveItemId(
+  id: string | null,
+  slot: SlotId,
+  registry: LookupRegistry,
+): string | null | undefined {
   if (id === null) return null;
   const mapped = id in LEGACY_IDS ? LEGACY_IDS[id] : id;
   if (mapped === null) return null;
@@ -67,7 +71,10 @@ export function sanitise(input: unknown, registry: LookupRegistry): LoadResult {
 
   const category = typeof ps.category === 'string' && powerCategoryById(ps.category) ? ps.category : null;
   const cat = powerCategoryById(category);
-  const powers = Array.isArray(ps.powers) && cat ? ps.powers.filter((p): p is string => typeof p === 'string' && cat.powers.includes(p)).slice(0, 3) : [];
+  const powers =
+    Array.isArray(ps.powers) && cat
+      ? ps.powers.filter((p): p is string => typeof p === 'string' && cat.powers.includes(p)).slice(0, 3)
+      : [];
 
   const character: Character = {
     version: 1,
@@ -75,8 +82,14 @@ export function sanitise(input: unknown, registry: LookupRegistry): LoadResult {
     body: {
       sex: body.sex === 'female' ? 'female' : 'male',
       skinTone: isHex(body.skinTone) ? body.skinTone.toLowerCase() : d.body.skinTone,
-      height: typeof body.height === 'number' && Number.isFinite(body.height) ? clamp01(body.height) : d.body.height,
-      musculature: typeof body.musculature === 'number' && Number.isFinite(body.musculature) ? clamp01(body.musculature) : d.body.musculature,
+      height:
+        typeof body.height === 'number' && Number.isFinite(body.height)
+          ? clamp01(body.height)
+          : d.body.height,
+      musculature:
+        typeof body.musculature === 'number' && Number.isFinite(body.musculature)
+          ? clamp01(body.musculature)
+          : d.body.musculature,
     },
     palette: {
       primary: isHex(pal.primary) ? pal.primary.toLowerCase() : d.palette.primary,
@@ -94,8 +107,15 @@ const allowEmpty = (slot: SlotId) => slot !== 'torso' && slot !== 'legs';
 
 // ---- compact share string ------------------------------------------------------------------------
 
-const b64url = (s: string) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-const unb64url = (s: string) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4))));
+const b64url = (s: string) =>
+  btoa(unescape(encodeURIComponent(s)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+const unb64url = (s: string) =>
+  decodeURIComponent(
+    escape(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4))),
+  );
 
 export function toShareString(c: Character): string {
   const shortId = (slot: SlotId) => (c.loadout[slot] ? c.loadout[slot]!.slice(slot.length + 1) : '');
@@ -105,7 +125,12 @@ export function toShareString(c: Character): string {
     return `${i}:${o.primary ? strip(o.primary) : ''}.${o.secondary ? strip(o.secondary) : ''}.${o.accent ? strip(o.accent) : ''}`;
   }).filter(Boolean);
   const cat = powerCategoryById(c.powerSet.category);
-  const power = cat ? `${POWER_CATEGORIES.indexOf(cat)}:${c.powerSet.powers.map((p) => cat.powers.indexOf(p)).filter((i) => i >= 0).join(',')}` : '';
+  const power = cat
+    ? `${POWER_CATEGORIES.indexOf(cat)}:${c.powerSet.powers
+        .map((p) => cat.powers.indexOf(p))
+        .filter((i) => i >= 0)
+        .join(',')}`
+    : '';
   const fields = [
     '1',
     encodeURIComponent(c.name),
@@ -154,12 +179,25 @@ export function fromShareString(s: string, registry: LookupRegistry): LoadResult
   if (f[11]) {
     const [ci, pis] = f[11].split(':');
     const cat = POWER_CATEGORIES[Number(ci)];
-    if (cat) powerSet = { category: cat.id, powers: (pis ?? '').split(',').filter(Boolean).map((i) => cat.powers[Number(i)]).filter((p): p is string => !!p) };
+    if (cat)
+      powerSet = {
+        category: cat.id,
+        powers: (pis ?? '')
+          .split(',')
+          .filter(Boolean)
+          .map((i) => cat.powers[Number(i)])
+          .filter((p): p is string => !!p),
+      };
   }
   const json = {
     version: 1,
     name: decodeURIComponent(f[1] ?? ''),
-    body: { sex: f[2] === 'f' ? 'female' : 'male', skinTone: unstrip(f[3] ?? ''), height: Number(f[4]) / 100, musculature: Number(f[5]) / 100 },
+    body: {
+      sex: f[2] === 'f' ? 'female' : 'male',
+      skinTone: unstrip(f[3] ?? ''),
+      height: Number(f[4]) / 100,
+      musculature: Number(f[5]) / 100,
+    },
     palette: { primary: unstrip(f[6] ?? ''), secondary: unstrip(f[7] ?? ''), accent: unstrip(f[8] ?? '') },
     loadout,
     overrides,
@@ -170,7 +208,10 @@ export function fromShareString(s: string, registry: LookupRegistry): LoadResult
 
 export const SHARE_PARAM = 'c';
 
-export function shareUrlFor(c: Character, base: string = typeof location !== 'undefined' ? location.href.split('#')[0]! : ''): string {
+export function shareUrlFor(
+  c: Character,
+  base: string = typeof location !== 'undefined' ? location.href.split('#')[0]! : '',
+): string {
   return `${base}#${SHARE_PARAM}=${toShareString(c)}`;
 }
 

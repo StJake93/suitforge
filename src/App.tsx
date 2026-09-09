@@ -18,7 +18,12 @@ import { RigCheck } from '@/dev/RigCheck';
 import { Thumbs } from '@/dev/Thumbs';
 
 type Route = 'app' | 'rigcheck' | 'thumbs';
-const routeFromHash = (): Route => (location.hash.startsWith('#/rigcheck') ? 'rigcheck' : location.hash.startsWith('#/thumbs') ? 'thumbs' : 'app');
+const routeFromHash = (): Route =>
+  location.hash.startsWith('#/rigcheck')
+    ? 'rigcheck'
+    : location.hash.startsWith('#/thumbs')
+      ? 'thumbs'
+      : 'app';
 
 /** Boot: share link wins, else autosave, else the seeded default. */
 function useBoot() {

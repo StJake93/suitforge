@@ -56,8 +56,7 @@ button {
   inset: 0;
   background:
     radial-gradient(60% 55% at 50% 42%, #1c2334 0%, rgba(28, 35, 52, 0) 70%),
-    radial-gradient(80% 60% at 50% 100%, #0f1522 0%, var(--bg) 70%),
-    var(--bg);
+    radial-gradient(80% 60% at 50% 100%, #0f1522 0%, var(--bg) 70%), var(--bg);
 }
 .viewport {
   position: absolute !important;
@@ -118,7 +117,10 @@ button {
   height: 32px;
   border-radius: 8px;
   color: var(--text-2);
-  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  transition:
+    background var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
 }
 .icon-btn:hover {
   background: rgba(255, 255, 255, 0.08);
@@ -165,7 +167,10 @@ button {
   background: rgba(255, 255, 255, 0.04);
   font-weight: 600;
   font-size: var(--fs-sm);
-  transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), border-color var(--t-fast);
+  transition:
+    background var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease),
+    border-color var(--t-fast);
   white-space: nowrap;
 }
 .btn:hover {
@@ -210,7 +215,9 @@ button {
   color: var(--text-2);
   font-weight: 600;
   font-size: var(--fs-xs);
-  transition: background var(--t-fast) var(--ease), color var(--t-fast);
+  transition:
+    background var(--t-fast) var(--ease),
+    color var(--t-fast);
 }
 .seg button[aria-pressed='true'] {
   background: var(--accent);
@@ -309,7 +316,11 @@ button {
 .slider input[type='range']::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 2px;
-  background: linear-gradient(90deg, var(--accent) var(--fill, 50%), rgba(255, 255, 255, 0.14) var(--fill, 50%));
+  background: linear-gradient(
+    90deg,
+    var(--accent) var(--fill, 50%),
+    rgba(255, 255, 255, 0.14) var(--fill, 50%)
+  );
 }
 .slider input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -356,7 +367,9 @@ button {
   border-radius: 50%;
   border: 2px solid transparent;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
-  transition: transform var(--t-fast) var(--ease), border-color var(--t-fast);
+  transition:
+    transform var(--t-fast) var(--ease),
+    border-color var(--t-fast);
   position: relative;
 }
 .swatch:hover {
@@ -451,7 +464,9 @@ button {
   align-items: center;
   border-radius: 8px;
   border-left: 3px solid transparent;
-  transition: background var(--t-fast) var(--ease), border-color var(--t-fast);
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast);
   min-height: 44px;
 }
 .slot-row:hover {
@@ -546,7 +561,9 @@ button {
   flex-direction: column;
   transform: translateX(calc(100% + var(--s4)));
   opacity: 0;
-  transition: transform var(--t-med) var(--ease), opacity var(--t-med) var(--ease);
+  transition:
+    transform var(--t-med) var(--ease),
+    opacity var(--t-med) var(--ease);
   overflow: hidden;
 }
 .drawer.open {
@@ -598,7 +615,10 @@ button {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.03);
   text-align: left;
-  transition: transform var(--t-fast) var(--ease), border-color var(--t-fast), background var(--t-fast);
+  transition:
+    transform var(--t-fast) var(--ease),
+    border-color var(--t-fast),
+    background var(--t-fast);
 }
 .card:hover,
 .card:focus-visible {
@@ -766,7 +786,9 @@ button {
   border-radius: 5px;
   overflow: hidden;
   border: 1px solid var(--border);
-  transition: transform var(--t-fast) var(--ease), border-color var(--t-fast);
+  transition:
+    transform var(--t-fast) var(--ease),
+    border-color var(--t-fast);
 }
 .preset:hover {
   transform: scale(1.1);

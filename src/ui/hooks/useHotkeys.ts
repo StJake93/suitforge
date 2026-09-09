@@ -42,7 +42,10 @@ export function useHotkeys() {
         case 'ArrowDown': {
           e.preventDefault();
           const idx = active ? SLOT_IDS.indexOf(active) : -1;
-          const next = e.key === 'ArrowDown' ? (idx + 1) % SLOT_IDS.length : (idx - 1 + SLOT_IDS.length) % SLOT_IDS.length;
+          const next =
+            e.key === 'ArrowDown'
+              ? (idx + 1) % SLOT_IDS.length
+              : (idx - 1 + SLOT_IDS.length) % SLOT_IDS.length;
           s.setActiveSlot(SLOT_IDS[next]!);
           return;
         }
@@ -86,7 +89,9 @@ export function useHotkeys() {
         case '/': {
           e.preventDefault();
           if (!active) s.setActiveSlot('helmet');
-          requestAnimationFrame(() => document.querySelector<HTMLInputElement>('[data-drawer-search]')?.focus());
+          requestAnimationFrame(() =>
+            document.querySelector<HTMLInputElement>('[data-drawer-search]')?.focus(),
+          );
           return;
         }
         case '?':

@@ -49,7 +49,14 @@ export interface Kit {
   cyl: (rTop: number, rBot: number, h: number, seg?: number) => BufferGeometry;
   cone: (r: number, h: number, seg?: number) => BufferGeometry;
   /** open cylinder segment; theta 0 = +Z (front), covering `thetaLength` radians clockwise from `thetaStart` */
-  arc: (rTop: number, rBot: number, h: number, thetaStart: number, thetaLength: number, seg?: number) => BufferGeometry;
+  arc: (
+    rTop: number,
+    rBot: number,
+    h: number,
+    thetaStart: number,
+    thetaLength: number,
+    seg?: number,
+  ) => BufferGeometry;
   sphere: (r: number, seg?: number) => BufferGeometry;
   hemi: (r: number, seg?: number) => BufferGeometry;
   prism: (sides: number, r: number, h: number) => BufferGeometry;
@@ -69,7 +76,8 @@ export const kit: Kit = {
   rbox: (w, h, d, r = Math.min(w, h, d) * 0.18) =>
     cached(`rbox:${w},${h},${d},${r}`, () => {
       const shape = new Shape();
-      const x = -w / 2, y = -h / 2;
+      const x = -w / 2,
+        y = -h / 2;
       shape.moveTo(x + r, y);
       shape.lineTo(x + w - r, y);
       shape.quadraticCurveTo(x + w, y, x + w, y + r);
@@ -79,22 +87,40 @@ export const kit: Kit = {
       shape.quadraticCurveTo(x, y + h, x, y + h - r);
       shape.lineTo(x, y + r);
       shape.quadraticCurveTo(x, y, x + r, y);
-      const g = new ExtrudeGeometry(shape, { depth: d - 2 * r, bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelSegments: 2, curveSegments: 3 });
+      const g = new ExtrudeGeometry(shape, {
+        depth: d - 2 * r,
+        bevelEnabled: true,
+        bevelThickness: r,
+        bevelSize: r,
+        bevelSegments: 2,
+        curveSegments: 3,
+      });
       g.translate(0, 0, -(d - 2 * r) / 2);
       return g;
     }),
   capsule: (r, len) => cached(`cap:${r},${len}`, () => new CapsuleGeometry(r, len, 3, 10)),
-  cyl: (rt, rb, h, seg = 12) => cached(`cyl:${rt},${rb},${h},${seg}`, () => new CylinderGeometry(rt, rb, h, seg)),
-  arc: (rt, rb, h, ts, tl, seg = 12) => cached(`arc:${rt},${rb},${h},${ts},${tl},${seg}`, () => new CylinderGeometry(rt, rb, h, seg, 1, true, ts, tl)),
+  cyl: (rt, rb, h, seg = 12) =>
+    cached(`cyl:${rt},${rb},${h},${seg}`, () => new CylinderGeometry(rt, rb, h, seg)),
+  arc: (rt, rb, h, ts, tl, seg = 12) =>
+    cached(
+      `arc:${rt},${rb},${h},${ts},${tl},${seg}`,
+      () => new CylinderGeometry(rt, rb, h, seg, 1, true, ts, tl),
+    ),
   cone: (r, h, seg = 10) => cached(`cone:${r},${h},${seg}`, () => new ConeGeometry(r, h, seg)),
-  sphere: (r, seg = 12) => cached(`sph:${r},${seg}`, () => new SphereGeometry(r, seg, Math.max(6, Math.round(seg * 0.7)))),
-  hemi: (r, seg = 12) => cached(`hemi:${r},${seg}`, () => new SphereGeometry(r, seg, Math.max(4, Math.round(seg * 0.5)), 0, Math.PI * 2, 0, Math.PI / 2)),
+  sphere: (r, seg = 12) =>
+    cached(`sph:${r},${seg}`, () => new SphereGeometry(r, seg, Math.max(6, Math.round(seg * 0.7)))),
+  hemi: (r, seg = 12) =>
+    cached(
+      `hemi:${r},${seg}`,
+      () => new SphereGeometry(r, seg, Math.max(4, Math.round(seg * 0.5)), 0, Math.PI * 2, 0, Math.PI / 2),
+    ),
   prism: (sides, r, h) => cached(`prism:${sides},${r},${h}`, () => new CylinderGeometry(r, r, h, sides)),
   ring: (r, tube, seg = 16) => cached(`ring:${r},${tube},${seg}`, () => new TorusGeometry(r, tube, 6, seg)),
   plate: (w, h, thick, bevel = Math.min(w, h) * 0.1) =>
     cached(`plate:${w},${h},${thick},${bevel}`, () => {
       const shape = new Shape();
-      const x = -w / 2, y = -h / 2;
+      const x = -w / 2,
+        y = -h / 2;
       shape.moveTo(x + bevel, y);
       shape.lineTo(x + w - bevel, y);
       shape.lineTo(x + w, y + bevel);
@@ -104,12 +130,25 @@ export const kit: Kit = {
       shape.lineTo(x, y + h - bevel);
       shape.lineTo(x, y + bevel);
       shape.closePath();
-      const g = new ExtrudeGeometry(shape, { depth: thick, bevelEnabled: true, bevelThickness: thick * 0.3, bevelSize: thick * 0.3, bevelSegments: 1 });
+      const g = new ExtrudeGeometry(shape, {
+        depth: thick,
+        bevelEnabled: true,
+        bevelThickness: thick * 0.3,
+        bevelSize: thick * 0.3,
+        bevelSegments: 1,
+      });
       g.translate(0, 0, -thick / 2);
       return g;
     }),
   lathe: (profile, seg = 14) =>
-    cached(`lathe:${profile.flat().join(',')},${seg}`, () => new LatheGeometry(profile.map(([x, y]) => new Vector2(x, y)), seg)),
+    cached(
+      `lathe:${profile.flat().join(',')},${seg}`,
+      () =>
+        new LatheGeometry(
+          profile.map(([x, y]) => new Vector2(x, y)),
+          seg,
+        ),
+    ),
   mesh: (geometry, role) => {
     const m = new Mesh(geometry, roleStub(role));
     m.castShadow = true;

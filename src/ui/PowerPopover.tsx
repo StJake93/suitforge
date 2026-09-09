@@ -27,11 +27,23 @@ export function PowerPopover({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div ref={ref} className="popover" role="dialog" aria-label="Power set" style={{ top: 'calc(var(--topbar-h) + 4px)', left: 'min(420px, 40vw)' }} data-testid="power-popover">
+    <div
+      ref={ref}
+      className="popover"
+      role="dialog"
+      aria-label="Power set"
+      style={{ top: 'calc(var(--topbar-h) + 4px)', left: 'min(420px, 40vw)' }}
+      data-testid="power-popover"
+    >
       <div className="body-row" style={{ marginBottom: 10 }}>
         <span className="label">Power set</span>
         <span style={{ display: 'flex', gap: 2 }}>
-          <button className={`icon-btn sm${locked ? ' locked' : ''}`} aria-label={locked ? 'Unlock power set' : 'Lock power set'} aria-pressed={locked} onClick={() => toggleLock('power')}>
+          <button
+            className={`icon-btn sm${locked ? ' locked' : ''}`}
+            aria-label={locked ? 'Unlock power set' : 'Lock power set'}
+            aria-pressed={locked}
+            onClick={() => toggleLock('power')}
+          >
             {locked ? <I.lock /> : <I.unlock />}
           </button>
           <button className="icon-btn sm" aria-label="Close" onClick={onClose}>
@@ -41,7 +53,17 @@ export function PowerPopover({ onClose }: { onClose: () => void }) {
       </div>
       <div className="power-cats" role="group" aria-label="Category">
         {POWER_CATEGORIES.map((c) => (
-          <button key={c.id} className="power-cat" aria-pressed={powerSet.category === c.id} style={{ '--cat': c.colour } as never} onClick={() => setPowerSet(powerSet.category === c.id ? { category: null, powers: [] } : { category: c.id, powers: [] })}>
+          <button
+            key={c.id}
+            className="power-cat"
+            aria-pressed={powerSet.category === c.id}
+            style={{ '--cat': c.colour } as never}
+            onClick={() =>
+              setPowerSet(
+                powerSet.category === c.id ? { category: null, powers: [] } : { category: c.id, powers: [] },
+              )
+            }
+          >
             <span className="dot" style={{ background: c.colour, color: c.colour }} />
             {c.label}
           </button>
@@ -54,14 +76,21 @@ export function PowerPopover({ onClose }: { onClose: () => void }) {
           </p>
           <div className="power-list" role="group" aria-label="Powers">
             {cat.powers.map((p) => (
-              <button key={p} className="chip" aria-pressed={powerSet.powers.includes(p)} onClick={() => togglePower(p)}>
+              <button
+                key={p}
+                className="chip"
+                aria-pressed={powerSet.powers.includes(p)}
+                onClick={() => togglePower(p)}
+              >
                 {p}
               </button>
             ))}
           </div>
         </>
       ) : (
-        <p className="hint" style={{ margin: '10px 0 0' }}>Choose a category to see its powers.</p>
+        <p className="hint" style={{ margin: '10px 0 0' }}>
+          Choose a category to see its powers.
+        </p>
       )}
     </div>
   );

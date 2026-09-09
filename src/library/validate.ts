@@ -4,7 +4,14 @@ import { REF } from '@/character/metrics';
 import { SLOTS, type SocketId } from '@/character/slots';
 import { SLOT_IDS, type SlotId } from '@/character/types';
 import { kit, roleStub } from './kit';
-import { MATERIAL_ROLES, TAGS, type BuildContext, type ItemBuild, type ItemDefinition, type MaterialRole } from './types';
+import {
+  MATERIAL_ROLES,
+  TAGS,
+  type BuildContext,
+  type ItemBuild,
+  type ItemDefinition,
+  type MaterialRole,
+} from './types';
 
 export const LIMITS = {
   maxMeshesPerItem: 24,
@@ -96,12 +103,16 @@ export function validateItem(item: ItemDefinition): string[] {
   if (!meta) errors.push(`unknown slot "${item.slot as string}"`);
   if (!ID_RE.test(item.id)) errors.push(`id "${item.id}" must match <slot>.<kebab-name>`);
   if (!item.id.startsWith(`${item.slot}.`)) errors.push(`id "${item.id}" must start with "${item.slot}."`);
-  if (!item.name || item.name.length > LIMITS.maxNameLength) errors.push(`name must be 1..${LIMITS.maxNameLength} chars`);
+  if (!item.name || item.name.length > LIMITS.maxNameLength)
+    errors.push(`name must be 1..${LIMITS.maxNameLength} chars`);
   if (!item.tags?.length) errors.push('at least one tag required');
-  for (const t of item.tags ?? []) if (!(TAGS as readonly string[]).includes(t)) errors.push(`unknown tag "${t}"`);
-  if (item.slot === 'weapon' && item.hands !== 1 && item.hands !== 2) errors.push('weapon must declare hands: 1 | 2');
+  for (const t of item.tags ?? [])
+    if (!(TAGS as readonly string[]).includes(t)) errors.push(`unknown tag "${t}"`);
+  if (item.slot === 'weapon' && item.hands !== 1 && item.hands !== 2)
+    errors.push('weapon must declare hands: 1 | 2');
   if (item.slot !== 'weapon' && item.hands !== undefined) errors.push('only weapons declare hands');
-  for (const h of item.hides ?? []) if (!(SLOT_IDS as readonly string[]).includes(h)) errors.push(`hides unknown slot "${h}"`);
+  for (const h of item.hides ?? [])
+    if (!(SLOT_IDS as readonly string[]).includes(h)) errors.push(`hides unknown slot "${h}"`);
   if (!meta) return errors;
 
   let build: ItemBuild;
@@ -113,11 +124,13 @@ export function validateItem(item: ItemDefinition): string[] {
     return errors;
   }
   const buildMs = performance.now() - t0;
-  if (buildMs > LIMITS.maxBuildMs * 4) errors.push(`build took ${buildMs.toFixed(1)} ms (limit ${LIMITS.maxBuildMs} ms warm)`);
+  if (buildMs > LIMITS.maxBuildMs * 4)
+    errors.push(`build took ${buildMs.toFixed(1)} ms (limit ${LIMITS.maxBuildMs} ms warm)`);
   if (!build.parts?.length) errors.push('build returned no parts');
   const seenSockets = new Set<string>();
   for (const part of build.parts ?? []) {
-    if (!meta.sockets.includes(part.socket)) errors.push(`socket "${part.socket}" not allowed for slot ${item.slot}`);
+    if (!meta.sockets.includes(part.socket))
+      errors.push(`socket "${part.socket}" not allowed for slot ${item.slot}`);
     if (seenSockets.has(part.socket)) errors.push(`duplicate part for socket "${part.socket}"`);
     seenSockets.add(part.socket);
     if (!part.object) errors.push(`part ${part.socket} has no object`);
@@ -126,10 +139,15 @@ export function validateItem(item: ItemDefinition): string[] {
       const m = o as Mesh;
       if (!m.isMesh) return;
       partTris += triangleCount(m.geometry);
-      const role = m.material && 'userData' in m.material ? (m.material.userData.role as MaterialRole | undefined) : undefined;
-      if (!role || !MATERIAL_ROLES.includes(role)) errors.push(`mesh "${m.name || '(unnamed)'}" in ${part.socket} does not use a material role`);
+      const role =
+        m.material && 'userData' in m.material
+          ? (m.material.userData.role as MaterialRole | undefined)
+          : undefined;
+      if (!role || !MATERIAL_ROLES.includes(role))
+        errors.push(`mesh "${m.name || '(unnamed)'}" in ${part.socket} does not use a material role`);
     });
-    if (partTris > LIMITS.maxTrianglesPerPart) errors.push(`part ${part.socket} has ${partTris} triangles (limit ${LIMITS.maxTrianglesPerPart})`);
+    if (partTris > LIMITS.maxTrianglesPerPart)
+      errors.push(`part ${part.socket} has ${partTris} triangles (limit ${LIMITS.maxTrianglesPerPart})`);
     if (part.object && SOCKET_BOUNDS[part.socket]) {
       const err = checkBounds(part.socket, partBounds(part.object));
       if (err) errors.push(err);
@@ -142,8 +160,10 @@ export function validateItem(item: ItemDefinition): string[] {
     if (!(hasL && hasR)) errors.push('paired slot item must provide both L and R parts');
   }
   const stats = statsFor(build);
-  if (stats.meshes > LIMITS.maxMeshesPerItem) errors.push(`${stats.meshes} meshes (limit ${LIMITS.maxMeshesPerItem})`);
-  if (stats.triangles > LIMITS.maxTrianglesPerItem) errors.push(`${stats.triangles} triangles (limit ${LIMITS.maxTrianglesPerItem})`);
+  if (stats.meshes > LIMITS.maxMeshesPerItem)
+    errors.push(`${stats.meshes} meshes (limit ${LIMITS.maxMeshesPerItem})`);
+  if (stats.triangles > LIMITS.maxTrianglesPerItem)
+    errors.push(`${stats.triangles} triangles (limit ${LIMITS.maxTrianglesPerItem})`);
   return errors;
 }
 
@@ -160,7 +180,8 @@ export function validateLibrary(items: ItemDefinition[]): Map<string, string[]> 
   }
   for (const slot of SLOT_IDS) {
     const n = perSlot.get(slot) ?? 0;
-    if (n < LIMITS.minItemsPerSlot) problems.set(`slot:${slot}`, [`${n} items (R-LIB-01 requires ≥ ${LIMITS.minItemsPerSlot})`]);
+    if (n < LIMITS.minItemsPerSlot)
+      problems.set(`slot:${slot}`, [`${n} items (R-LIB-01 requires ≥ ${LIMITS.minItemsPerSlot})`]);
   }
   return problems;
 }

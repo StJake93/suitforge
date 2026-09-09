@@ -17,7 +17,17 @@ interface Props {
   onEquip: (id: string | null) => void;
 }
 
-export function ItemCard({ item, equipped, previewing, palette, override, skinTone, onPreview, onPreviewEnd, onEquip }: Props) {
+export function ItemCard({
+  item,
+  equipped,
+  previewing,
+  palette,
+  override,
+  skinTone,
+  onPreview,
+  onPreviewEnd,
+  onEquip,
+}: Props) {
   const url = useThumbnail(item?.id ?? null, palette, override, skinTone);
   const id = item?.id ?? null;
   const touch = useRef<{ timer: number | null; longPressed: boolean }>({ timer: null, longPressed: false });

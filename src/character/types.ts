@@ -52,7 +52,8 @@ export interface Character {
 
 export const HEIGHT_MIN_M = 1.55;
 export const HEIGHT_MAX_M = 2.1;
-export const heightToMetres = (h: number): number => HEIGHT_MIN_M + clamp01(h) * (HEIGHT_MAX_M - HEIGHT_MIN_M);
+export const heightToMetres = (h: number): number =>
+  HEIGHT_MIN_M + clamp01(h) * (HEIGHT_MAX_M - HEIGHT_MIN_M);
 export const clamp01 = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
 
 export type LockId = SlotId | 'body' | 'palette' | 'name' | 'power';

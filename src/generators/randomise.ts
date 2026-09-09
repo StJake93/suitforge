@@ -30,7 +30,12 @@ export function randomPowerSet(rng: Rng): Character['powerSet'] {
   return { category: cat.id, powers };
 }
 
-export function randomiseAll(c: Character, locks: ReadonlySet<LockId>, registry: Registry, rng: Rng): Character {
+export function randomiseAll(
+  c: Character,
+  locks: ReadonlySet<LockId>,
+  registry: Registry,
+  rng: Rng,
+): Character {
   const loadout = { ...c.loadout };
   for (const slot of SLOT_IDS) if (!locks.has(slot)) loadout[slot] = randomSlotItem(slot, registry, rng);
   const body = locks.has('body')

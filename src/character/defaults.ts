@@ -1,8 +1,7 @@
 import type { Character, Loadout } from './types';
 import { SLOT_IDS } from './types';
 
-export const emptyLoadout = (): Loadout =>
-  Object.fromEntries(SLOT_IDS.map((s) => [s, null])) as Loadout;
+export const emptyLoadout = (): Loadout => Object.fromEntries(SLOT_IDS.map((s) => [s, null])) as Loadout;
 
 /** Deterministic first-load character (R-CHAR-08). Item ids must exist in the library. */
 export const DEFAULT_CHARACTER: Character = {

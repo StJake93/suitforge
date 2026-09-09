@@ -33,7 +33,14 @@ export async function composeWithBackground(dataUrl: string, background: string)
   c.width = img.width;
   c.height = img.height;
   const ctx = c.getContext('2d')!;
-  const grad = ctx.createRadialGradient(c.width / 2, c.height * 0.45, c.height * 0.1, c.width / 2, c.height * 0.5, c.height * 0.8);
+  const grad = ctx.createRadialGradient(
+    c.width / 2,
+    c.height * 0.45,
+    c.height * 0.1,
+    c.width / 2,
+    c.height * 0.5,
+    c.height * 0.8,
+  );
   grad.addColorStop(0, '#1a2030');
   grad.addColorStop(1, background);
   ctx.fillStyle = grad;

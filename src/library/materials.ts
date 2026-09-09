@@ -1,5 +1,13 @@
 // MaterialSet: one set of real materials per mounted item; palette changes mutate colours in place (R-CHAR-06).
-import { Color, DoubleSide, Material, Mesh, MeshPhysicalMaterial, MeshStandardMaterial, Object3D } from 'three';
+import {
+  Color,
+  DoubleSide,
+  Material,
+  Mesh,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
+  Object3D,
+} from 'three';
 import type { Palette } from '@/character/types';
 import { MATERIAL_ROLES, type MaterialRole } from './types';
 
@@ -22,7 +30,16 @@ export class MaterialSet {
       accent: std({ color: '#fff', metalness: 0.6, roughness: 0.3, emissiveIntensity: 0.25 }),
       metal: std({ color: '#c9ccd3', metalness: 0.95, roughness: 0.28 }),
       dark: std({ color: '#15171c', metalness: 0.1, roughness: 0.9 }),
-      glass: new MeshPhysicalMaterial({ color: '#203040', metalness: 0.2, roughness: 0.06, transparent: true, opacity: 0.78, side: DoubleSide, flatShading: true, envMapIntensity: 1.6 }),
+      glass: new MeshPhysicalMaterial({
+        color: '#203040',
+        metalness: 0.2,
+        roughness: 0.06,
+        transparent: true,
+        opacity: 0.78,
+        side: DoubleSide,
+        flatShading: true,
+        envMapIntensity: 1.6,
+      }),
       glow: std({ color: '#fff', emissive: '#fff', emissiveIntensity: 1.6, roughness: 1, metalness: 0 }),
       skin: new MeshStandardMaterial({ color: '#c68642', metalness: 0, roughness: 0.75 }),
     };

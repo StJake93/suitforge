@@ -25,7 +25,8 @@ export function RigCheck() {
     const loadout = { ...s.character.loadout };
     for (const slot of SLOT_IDS) {
       const items = registry.bySlot(slot);
-      const pick = wanted.find((w) => w.startsWith(`${slot}.`)) ?? items[offset % Math.max(1, items.length)]?.id ?? null;
+      const pick =
+        wanted.find((w) => w.startsWith(`${slot}.`)) ?? items[offset % Math.max(1, items.length)]?.id ?? null;
       loadout[slot] = pick;
     }
     s.load({ ...s.character, loadout }, { history: false });
@@ -45,7 +46,18 @@ export function RigCheck() {
       <div className="app-bg" />
       <Viewport />
       <div className="overlay">
-        <div className="panel" style={{ position: 'absolute', top: 12, left: 12, padding: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div
+          className="panel"
+          style={{
+            position: 'absolute',
+            top: 12,
+            left: 12,
+            padding: 12,
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+          }}
+        >
           <strong>RigCheck</strong>
           <span className="hint">{EXTREMES[i]!.label}</span>
           <button className="btn" onClick={() => setPaused(!paused)}>

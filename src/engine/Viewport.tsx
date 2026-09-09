@@ -57,7 +57,16 @@ export function Viewport() {
       <Turntable>
         <CharacterRig />
       </Turntable>
-      <ContactShadows position={[0, 0.001, 0]} opacity={0.6} scale={3} blur={2} far={2.4} resolution={256} frames={Infinity} color="#000000" />
+      <ContactShadows
+        position={[0, 0.001, 0]}
+        opacity={0.6}
+        scale={3}
+        blur={2}
+        far={2.4}
+        resolution={256}
+        frames={Infinity}
+        color="#000000"
+      />
       <CameraRig />
     </Canvas>
   );

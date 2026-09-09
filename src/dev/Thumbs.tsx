@@ -21,7 +21,10 @@ export function Thumbs() {
   return (
     <div style={{ padding: 24, overflow: 'auto', height: '100%' }}>
       <h1 style={{ margin: '0 0 16px' }}>
-        Thumbnail sheet <a className="btn" href="#/">Back</a>
+        Thumbnail sheet{' '}
+        <a className="btn" href="#/">
+          Back
+        </a>
       </h1>
       {SLOT_IDS.map((slot) => (
         <section key={slot} style={{ marginBottom: 24 }}>

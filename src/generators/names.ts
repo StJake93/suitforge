@@ -3,21 +3,136 @@ import type { Sex } from '@/character/types';
 import { mulberry32, type Rng } from './rng';
 
 const ADJ = {
-  common: ['Iron', 'Silent', 'Crimson', 'Golden', 'Shadow', 'Steel', 'Night', 'Storm', 'Solar', 'Lunar', 'Grim', 'Bright', 'Wild', 'Swift', 'Silver', 'Obsidian', 'Radiant', 'Hollow', 'Azure', 'Scarlet', 'Onyx', 'Ivory', 'Cobalt', 'Ember', 'Frost', 'Thunder', 'Void', 'Neon', 'Chrome', 'Titan'],
+  common: [
+    'Iron',
+    'Silent',
+    'Crimson',
+    'Golden',
+    'Shadow',
+    'Steel',
+    'Night',
+    'Storm',
+    'Solar',
+    'Lunar',
+    'Grim',
+    'Bright',
+    'Wild',
+    'Swift',
+    'Silver',
+    'Obsidian',
+    'Radiant',
+    'Hollow',
+    'Azure',
+    'Scarlet',
+    'Onyx',
+    'Ivory',
+    'Cobalt',
+    'Ember',
+    'Frost',
+    'Thunder',
+    'Void',
+    'Neon',
+    'Chrome',
+    'Titan',
+    'Amber',
+    'Jade',
+    'Violet',
+    'Crystal',
+    'Bronze',
+    'Blazing',
+    'Howling',
+    'Dread',
+    'Noble',
+    'Rogue',
+  ],
   energy: ['Volt', 'Plasma', 'Arc', 'Photon', 'Ion', 'Pulse', 'Flare', 'Surge', 'Fusion', 'Blaze'],
   tech: ['Chrome', 'Circuit', 'Nano', 'Binary', 'Servo', 'Quantum', 'Cyber', 'Vector', 'Delta', 'Omega'],
   elemental: ['Ember', 'Frost', 'Tempest', 'Granite', 'Tidal', 'Cinder', 'Glacier', 'Gale', 'Magma', 'Rime'],
-  cosmic: ['Nova', 'Stellar', 'Astral', 'Nebula', 'Orbital', 'Eclipse', 'Comet', 'Zenith', 'Quasar', 'Meteor'],
+  cosmic: [
+    'Nova',
+    'Stellar',
+    'Astral',
+    'Nebula',
+    'Orbital',
+    'Eclipse',
+    'Comet',
+    'Zenith',
+    'Quasar',
+    'Meteor',
+  ],
   mystic: ['Arcane', 'Rune', 'Hex', 'Spirit', 'Occult', 'Sigil', 'Veiled', 'Ancient', 'Sacred', 'Warden'],
-  might: ['Titan', 'Iron', 'Colossal', 'Brute', 'Rampart', 'Granite', 'Anvil', 'Juggernaut', 'Bastion', 'Mammoth'],
+  might: [
+    'Titan',
+    'Iron',
+    'Colossal',
+    'Brute',
+    'Rampart',
+    'Granite',
+    'Anvil',
+    'Juggernaut',
+    'Bastion',
+    'Mammoth',
+  ],
   speed: ['Swift', 'Blur', 'Sonic', 'Flash', 'Dash', 'Rapid', 'Streak', 'Zephyr', 'Bolt', 'Velocity'],
-  stealth: ['Shadow', 'Silent', 'Phantom', 'Ghost', 'Umbral', 'Midnight', 'Smoke', 'Wraith', 'Cloak', 'Spectre'],
+  stealth: [
+    'Shadow',
+    'Silent',
+    'Phantom',
+    'Ghost',
+    'Umbral',
+    'Midnight',
+    'Smoke',
+    'Wraith',
+    'Cloak',
+    'Spectre',
+  ],
   psionic: ['Mind', 'Psi', 'Astral', 'Thought', 'Echo', 'Dream', 'Cerebral', 'Lucid', 'Inner', 'Prism'],
   nature: ['Thorn', 'Bloom', 'Fang', 'Root', 'Wild', 'Feral', 'Verdant', 'Briar', 'Moss', 'Talon'],
 } as const;
 
 const NOUN = {
-  common: ['Sentinel', 'Guardian', 'Warden', 'Knight', 'Ranger', 'Hunter', 'Striker', 'Paladin', 'Vanguard', 'Shield', 'Blade', 'Hawk', 'Wolf', 'Falcon', 'Lion', 'Raven', 'Viper', 'Phoenix', 'Titan', 'Comet', 'Spectre', 'Lance', 'Herald', 'Reaper', 'Marshal', 'Nomad', 'Sabre', 'Bastion', 'Vortex', 'Cipher'],
+  common: [
+    'Sentinel',
+    'Guardian',
+    'Warden',
+    'Knight',
+    'Ranger',
+    'Hunter',
+    'Striker',
+    'Paladin',
+    'Vanguard',
+    'Shield',
+    'Blade',
+    'Hawk',
+    'Wolf',
+    'Falcon',
+    'Lion',
+    'Raven',
+    'Viper',
+    'Phoenix',
+    'Titan',
+    'Comet',
+    'Spectre',
+    'Lance',
+    'Herald',
+    'Reaper',
+    'Marshal',
+    'Nomad',
+    'Sabre',
+    'Bastion',
+    'Vortex',
+    'Cipher',
+    'Panther',
+    'Cobra',
+    'Jackal',
+    'Mantis',
+    'Kestrel',
+    'Sparrow',
+    'Golem',
+    'Dynamo',
+    'Meteor',
+    'Oracle',
+  ],
   energy: ['Spark', 'Surge', 'Bolt', 'Beam', 'Flare', 'Arc', 'Charge', 'Ray', 'Circuit', 'Pulse'],
   tech: ['Unit', 'Engine', 'Protocol', 'Frame', 'Mech', 'Drone', 'Core', 'Array', 'Module', 'Matrix'],
   elemental: ['Storm', 'Flame', 'Tide', 'Quake', 'Frost', 'Gale', 'Blaze', 'Avalanche', 'Ash', 'Torrent'],
@@ -25,16 +140,137 @@ const NOUN = {
   mystic: ['Oracle', 'Warlock', 'Seer', 'Sage', 'Mystic', 'Witch', 'Conjurer', 'Adept', 'Hexen', 'Augur'],
   might: ['Fist', 'Hammer', 'Anvil', 'Wall', 'Crusher', 'Behemoth', 'Goliath', 'Colossus', 'Ram', 'Bulwark'],
   speed: ['Streak', 'Flash', 'Dash', 'Blur', 'Bolt', 'Rush', 'Zephyr', 'Sprint', 'Velocity', 'Arrow'],
-  stealth: ['Shade', 'Wraith', 'Phantom', 'Ghost', 'Shadow', 'Whisper', 'Smoke', 'Veil', 'Mask', 'Silhouette'],
+  stealth: [
+    'Shade',
+    'Wraith',
+    'Phantom',
+    'Ghost',
+    'Shadow',
+    'Whisper',
+    'Smoke',
+    'Veil',
+    'Mask',
+    'Silhouette',
+  ],
   psionic: ['Mind', 'Echo', 'Psyche', 'Thought', 'Dreamer', 'Oracle', 'Prism', 'Trance', 'Aura', 'Cortex'],
   nature: ['Thorn', 'Fang', 'Talon', 'Root', 'Bloom', 'Bramble', 'Grove', 'Beast', 'Vine', 'Claw'],
 } as const;
 
-const PREFIX = ['Volt', 'Arc', 'Nova', 'Sky', 'Iron', 'Night', 'Star', 'Storm', 'Sun', 'Moon', 'Neo', 'Ultra', 'Mega', 'Hyper', 'Astro', 'Cryo', 'Pyro', 'Aero', 'Geo', 'Chrono', 'Umbra', 'Lux', 'Ferro', 'Tele', 'Omni'];
-const SUFFIX = ['strike', 'blade', 'wing', 'fire', 'storm', 'shade', 'hawk', 'fist', 'star', 'wave', 'knight', 'shot', 'burst', 'runner', 'dancer', 'bringer', 'breaker', 'walker', 'shard', 'flare'];
-const TITLE_M = ['Captain', 'Doctor', 'Lord', 'Mister', 'Agent', 'Commander', 'Sir', 'Baron', 'Marshal', 'Professor'];
-const TITLE_F = ['Captain', 'Doctor', 'Lady', 'Miss', 'Agent', 'Commander', 'Dame', 'Baroness', 'Marshal', 'Professor'];
-const CODENAME = ['Alpha', 'Zero', 'Prime', 'Vector', 'Omega', 'Nine', 'Seven', 'Echo', 'Sigma', 'Halo', 'X', 'Ultra'];
+const PREFIX = [
+  'Volt',
+  'Arc',
+  'Nova',
+  'Sky',
+  'Iron',
+  'Night',
+  'Star',
+  'Storm',
+  'Sun',
+  'Moon',
+  'Neo',
+  'Ultra',
+  'Mega',
+  'Hyper',
+  'Astro',
+  'Cryo',
+  'Pyro',
+  'Aero',
+  'Geo',
+  'Chrono',
+  'Umbra',
+  'Lux',
+  'Ferro',
+  'Tele',
+  'Omni',
+];
+const SUFFIX = [
+  'strike',
+  'blade',
+  'wing',
+  'fire',
+  'storm',
+  'shade',
+  'hawk',
+  'fist',
+  'star',
+  'wave',
+  'knight',
+  'shot',
+  'burst',
+  'runner',
+  'dancer',
+  'bringer',
+  'breaker',
+  'walker',
+  'shard',
+  'flare',
+];
+const TITLE_M = [
+  'Captain',
+  'Doctor',
+  'Lord',
+  'Mister',
+  'Agent',
+  'Commander',
+  'Sir',
+  'Baron',
+  'Marshal',
+  'Professor',
+];
+const TITLE_F = [
+  'Captain',
+  'Doctor',
+  'Lady',
+  'Miss',
+  'Agent',
+  'Commander',
+  'Dame',
+  'Baroness',
+  'Marshal',
+  'Professor',
+];
+const CODENAME = [
+  'Alpha',
+  'Zero',
+  'Prime',
+  'Vector',
+  'Omega',
+  'Nine',
+  'Seven',
+  'Echo',
+  'Sigma',
+  'Halo',
+  'X',
+  'Ultra',
+];
+const PLACE = [
+  'Meridian',
+  'the North',
+  'Neo Tokyo',
+  'the Rift',
+  'Avalon',
+  'Titan City',
+  'the Deep',
+  'Solaris',
+  'Kestrel Bay',
+  'the Wastes',
+  'Orion',
+  'New Harbour',
+  'the Spire',
+  'Helix',
+  'Aurora',
+  'the Undercity',
+  'Vega',
+  'Ironhold',
+  'the Reach',
+  'Zenith',
+  'Mirage',
+  'the Frontier',
+  'Tempest Isle',
+  'Nova Prime',
+];
+/** relative weights per pattern index (three-word patterns are rarer) */
+const WEIGHTS = [3, 4, 3, 3, 2, 2, 2, 1, 1];
 
 type CatKey = keyof typeof ADJ;
 
@@ -50,7 +286,8 @@ export interface NameInput {
   category: string | null;
 }
 
-export const NAME_PATTERNS = 7;
+export const NAME_PATTERNS = WEIGHTS.length;
+const WEIGHT_TOTAL = WEIGHTS.reduce((a, b) => a + b, 0);
 
 function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -60,7 +297,12 @@ export function generateName(input: NameInput, rng: Rng): string {
   const { adj, noun, themed } = pools(input.category);
   const themedAdj = themed?.adj ?? adj;
   const themedNoun = themed?.noun ?? noun;
-  const pattern = rng.int(NAME_PATTERNS);
+  let roll = rng.int(WEIGHT_TOTAL);
+  let pattern = 0;
+  while (roll >= WEIGHTS[pattern]!) {
+    roll -= WEIGHTS[pattern]!;
+    pattern++;
+  }
   switch (pattern) {
     case 0:
       return `The ${rng.pick(adj)} ${rng.pick(noun)}`;
@@ -74,15 +316,43 @@ export function generateName(input: NameInput, rng: Rng): string {
       return `${rng.pick(input.sex === 'female' ? TITLE_F : TITLE_M)} ${rng.pick(themedNoun)}`;
     case 5:
       return `${rng.pick(themedNoun)} ${rng.pick(CODENAME)}`;
-    default:
+    case 6:
       return cap(`${rng.pick(themedAdj)}-${rng.pick(NOUN.common)}`);
+    case 7:
+      return `${rng.pick(input.sex === 'female' ? TITLE_F : TITLE_M)} ${rng.pick(themedAdj)} ${rng.pick(noun)}`;
+    default:
+      return `${rng.pick(adj)} ${rng.pick(themedNoun)} of ${rng.pick(PLACE)}`;
   }
 }
 
-export const generateNameSeeded = (input: NameInput, seed: number): string => generateName(input, mulberry32(seed));
+const RECENT_LIMIT = 20;
+const recent: string[] = [];
+
+/** UI roll: like generateName but never repeats any of the last 20 rolled names (R-GEN-01). */
+export function rollName(input: NameInput, rng: Rng): string {
+  let name = generateName(input, rng);
+  for (let i = 0; i < 25 && recent.includes(name); i++) name = generateName(input, rng);
+  recent.push(name);
+  if (recent.length > RECENT_LIMIT) recent.shift();
+  return name;
+}
+
+export const generateNameSeeded = (input: NameInput, seed: number): string =>
+  generateName(input, mulberry32(seed));
 
 /** Approximate size of the output space, for the R-GEN-01 test. */
 export function nameSpaceSize(): number {
-  const a = ADJ.common.length + 10, n = NOUN.common.length + 10;
-  return a * n + a * n + a * SUFFIX.length + PREFIX.length * SUFFIX.length + TITLE_M.length * n + n * CODENAME.length + a * NOUN.common.length;
+  const a = ADJ.common.length + 10,
+    n = NOUN.common.length + 10;
+  return (
+    a * n +
+    a * n +
+    a * SUFFIX.length +
+    PREFIX.length * SUFFIX.length +
+    TITLE_M.length * n +
+    n * CODENAME.length +
+    a * NOUN.common.length +
+    TITLE_M.length * a * n +
+    a * n * PLACE.length
+  );
 }

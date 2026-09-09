@@ -62,12 +62,22 @@ export function twoBoneIK(S: Vector3, T: Vector3, L1: number, L2: number, pole: 
   p.addScaledVector(dir, -p.dot(dir));
   if (p.lengthSq() < 1e-8) p.set(0, -1, 0).addScaledVector(dir, -dir.y);
   p.normalize();
-  const elbow = new Vector3().copy(S).addScaledVector(dir, L1 * Math.cos(a)).addScaledVector(p, L1 * Math.sin(a));
+  const elbow = new Vector3()
+    .copy(S)
+    .addScaledVector(dir, L1 * Math.cos(a))
+    .addScaledVector(p, L1 * Math.sin(a));
   const wrist = new Vector3().copy(S).addScaledVector(dir, d);
   return { elbow, wrist };
 }
 
-function fromAngles(S: Vector3, side: 1 | -1, rig: ArmRig, abduct: number, flex: number, elbowBend: number): ArmSolution {
+function fromAngles(
+  S: Vector3,
+  side: 1 | -1,
+  rig: ArmRig,
+  abduct: number,
+  flex: number,
+  elbowBend: number,
+): ArmSolution {
   const upper = limbDir(abduct, flex, side);
   const elbow = new Vector3().copy(S).addScaledVector(upper, rig.upperArmLen);
   // forearm: rotate the upper direction forward (about the local X axis) by elbowBend, slightly inward
@@ -87,7 +97,15 @@ export function orient(yAxis: Vector3, zHint: Vector3): Quaternion {
   const m = [x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z];
   // build quaternion from rotation matrix columns x,y,z
   const q = new Quaternion();
-  const m00 = m[0]!, m10 = m[1]!, m20 = m[2]!, m01 = m[3]!, m11 = m[4]!, m21 = m[5]!, m02 = m[6]!, m12 = m[7]!, m22 = m[8]!;
+  const m00 = m[0]!,
+    m10 = m[1]!,
+    m20 = m[2]!,
+    m01 = m[3]!,
+    m11 = m[4]!,
+    m21 = m[5]!,
+    m02 = m[6]!,
+    m12 = m[7]!,
+    m22 = m[8]!;
   const tr = m00 + m11 + m22;
   if (tr > 0) {
     const s = 0.5 / Math.sqrt(tr + 1);

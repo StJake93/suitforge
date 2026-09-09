@@ -2,8 +2,17 @@
 import { create } from 'zustand';
 import { DEFAULT_CHARACTER } from '@/character/defaults';
 import { SLOTS } from '@/character/slots';
-import { SLOT_IDS, type Body, type Character, type LockId, type Loadout, type Palette, type PowerSet, type SlotId } from '@/character/types';
-import { generateName } from '@/generators/names';
+import {
+  SLOT_IDS,
+  type Body,
+  type Character,
+  type LockId,
+  type Loadout,
+  type Palette,
+  type PowerSet,
+  type SlotId,
+} from '@/character/types';
+import { rollName } from '@/generators/names';
 import { randomiseAll, randomiseSlot } from '@/generators/randomise';
 import { seededRng } from '@/generators/rng';
 import { registry } from '@/library';
@@ -115,7 +124,11 @@ export const useStore = create<Store>((set, get) => ({
   },
 
   setPreview: (slot, itemId) =>
-    set((s) => (s.preview && s.preview.slot === slot && s.preview.itemId === itemId ? {} : { preview: { slot, itemId } })),
+    set((s) =>
+      s.preview && s.preview.slot === slot && s.preview.itemId === itemId
+        ? {}
+        : { preview: { slot, itemId } },
+    ),
   clearPreview: () => set((s) => (s.preview ? { preview: null } : {})),
 
   updateBody: (patch, commitNow) =>
@@ -143,12 +156,14 @@ export const useStore = create<Store>((set, get) => ({
       return { character: next, dragBase: s.dragBase ?? s.character };
     }),
 
-  setName: (name) =>
-    set((s) => (s.character.name === name ? {} : commit(s, { ...s.character, name }))),
+  setName: (name) => set((s) => (s.character.name === name ? {} : commit(s, { ...s.character, name }))),
 
   rollName: () =>
     set((s) => {
-      const name = generateName({ sex: s.character.body.sex, category: s.character.powerSet.category }, seededRng());
+      const name = rollName(
+        { sex: s.character.body.sex, category: s.character.powerSet.category },
+        seededRng(),
+      );
       return commit(s, { ...s.character, name });
     }),
 
@@ -179,11 +194,23 @@ export const useStore = create<Store>((set, get) => ({
     }),
 
   load: (c, opts) =>
-    set((s) => (opts?.history === false ? { character: c, history: emptyHistory(), dragBase: null, preview: null } : { ...commit(s, c), preview: null })),
+    set((s) =>
+      opts?.history === false
+        ? { character: c, history: emptyHistory(), dragBase: null, preview: null }
+        : { ...commit(s, c), preview: null },
+    ),
   reset: () => set((s) => ({ ...commit(s, DEFAULT_CHARACTER), preview: null })),
 
   setActiveSlot: (slot) =>
-    set((s) => ({ ui: { ...s.ui, activeSlot: slot, search: slot === s.ui.activeSlot ? s.ui.search : '', tags: slot === s.ui.activeSlot ? s.ui.tags : [] }, preview: null })),
+    set((s) => ({
+      ui: {
+        ...s.ui,
+        activeSlot: slot,
+        search: slot === s.ui.activeSlot ? s.ui.search : '',
+        tags: slot === s.ui.activeSlot ? s.ui.tags : [],
+      },
+      preview: null,
+    })),
   toggleLock: (id) =>
     set((s) => {
       const locks = new Set(s.ui.locks);
@@ -195,7 +222,8 @@ export const useStore = create<Store>((set, get) => ({
   toast: (message) =>
     set((s) => ({ ui: { ...s.ui, toasts: [...s.ui.toasts.slice(-2), { id: ++toastId, message }] } })),
   dismissToast: (id) => set((s) => ({ ui: { ...s.ui, toasts: s.ui.toasts.filter((t) => t.id !== id) } })),
-  frameAll: () => set((s) => ({ ui: { ...s.ui, activeSlot: null, cameraNonce: s.ui.cameraNonce + 1 }, preview: null })),
+  frameAll: () =>
+    set((s) => ({ ui: { ...s.ui, activeSlot: null, cameraNonce: s.ui.cameraNonce + 1 }, preview: null })),
 }));
 
 // ---- selectors -----------------------------------------------------------------------------------
@@ -217,6 +245,7 @@ export function hiddenSlots(loadout: Loadout): Map<SlotId, SlotId> {
   return hidden;
 }
 
-export const selectEffectiveLoadout = (s: Store): Loadout => applyPreview(s.character.loadout, s.preview);
+/** Not for use as a useStore selector (returns a new object); combine with useMemo. */
+export const effectiveLoadout = (s: Store): Loadout => applyPreview(s.character.loadout, s.preview);
 export const canUndo = (s: Store): boolean => s.history.past.length > 0;
 export const canRedo = (s: Store): boolean => s.history.future.length > 0;

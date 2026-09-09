@@ -25,7 +25,12 @@ export function KeyboardHelp() {
   if (!open) return null;
   return (
     <div className="backdrop" onClick={() => setUi({ keyboardHelp: false })}>
-      <div className="dialog" role="dialog" aria-label="Keyboard shortcuts" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="dialog"
+        role="dialog"
+        aria-label="Keyboard shortcuts"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="panel-head">
           <div className="panel-title">Keyboard shortcuts</div>
           <button className="icon-btn" aria-label="Close" onClick={() => setUi({ keyboardHelp: false })}>

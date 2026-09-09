@@ -8,7 +8,7 @@ import type { PoseId } from '@/character/pose';
 import { ease } from '@/character/pose';
 import { SLOT_IDS } from '@/character/types';
 import { registry } from '@/library';
-import { hiddenSlots, selectEffectiveLoadout, useStore } from '@/state/store';
+import { applyPreview, hiddenSlots, useStore } from '@/state/store';
 import { bakeBuild, getBaked } from './builds';
 import { buildBody } from './body';
 import { ItemMount } from './ItemMount';
@@ -17,7 +17,9 @@ import { SocketsContext, type SocketGroups } from './SocketsContext';
 const POSE_MS = 300;
 
 /** Shared, mutable metrics for the camera rig and export (read-only for consumers). */
-export const liveMetrics: { current: BodyMetrics } = { current: computeMetrics({ sex: 'male', skinTone: '#000', height: 0.5, musculature: 0.5 }) };
+export const liveMetrics: { current: BodyMetrics } = {
+  current: computeMetrics({ sex: 'male', skinTone: '#000', height: 0.5, musculature: 0.5 }),
+};
 
 export function CharacterRig() {
   const sockets = useMemo<SocketGroups>(() => {
@@ -31,11 +33,20 @@ export function CharacterRig() {
   }, []);
   const root = useRef<Group>(null);
   const character = useStore((s) => s.character);
-  const loadout = useStore(selectEffectiveLoadout);
-  const reduced = useMemo(() => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches, []);
+  const rawLoadout = useStore((s) => s.character.loadout);
+  const preview = useStore((s) => s.preview);
+  // memoised: a selector returning a fresh object each read would loop useSyncExternalStore
+  const loadout = useMemo(() => applyPreview(rawLoadout, preview), [rawLoadout, preview]);
+  const reduced = useMemo(
+    () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches,
+    [],
+  );
 
   // pose blend state (mutable, per-frame)
-  const pose = useRef<{ blend: PoseBlend; start: number }>({ blend: { from: 'hero', to: 'hero', t: 1 }, start: 0 });
+  const pose = useRef<{ blend: PoseBlend; start: number }>({
+    blend: { from: 'hero', to: 'hero', t: 1 },
+    start: 0,
+  });
   const targetPose: PoseId = useMemo(() => {
     const w = loadout.weapon ? registry.byId(loadout.weapon) : undefined;
     return w?.hands === 2 ? 'twoHand' : w?.hands === 1 ? 'oneHand' : 'hero';
@@ -87,7 +98,11 @@ export function CharacterRig() {
         r.rotation.z = Math.sin(t * 0.6) * 0.006;
         const breathe = 1 + Math.sin(t * 1.3 + 0.4) * 0.008;
         const chest = sockets.chest;
-        chest.scale.set(liveMetrics.current.sockets.chest.scale.x, liveMetrics.current.sockets.chest.scale.y, liveMetrics.current.sockets.chest.scale.z * breathe);
+        chest.scale.set(
+          liveMetrics.current.sockets.chest.scale.x,
+          liveMetrics.current.sockets.chest.scale.y,
+          liveMetrics.current.sockets.chest.scale.z * breathe,
+        );
       } else {
         r.position.y = 0;
         r.rotation.z = 0;
@@ -107,7 +122,10 @@ export function CharacterRig() {
     }
   });
 
-  const body = useMemo(() => bakeBuild(`body:${character.body.sex}`, buildBody(character.body.sex), true), [character.body.sex]);
+  const body = useMemo(
+    () => bakeBuild(`body:${character.body.sex}`, buildBody(character.body.sex), true),
+    [character.body.sex],
+  );
   const hidden = useMemo(() => hiddenSlots(loadout), [loadout]);
   // items mounted after the first settle pop in (UX §9); the initial loadout does not
   const [settled, setSettled] = useState(false);

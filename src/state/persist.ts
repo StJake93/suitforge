@@ -41,7 +41,9 @@ export function listSaves(): SaveEntry[] {
   try {
     const raw = s.getItem(SAVES_KEY);
     const arr = raw ? (JSON.parse(raw) as unknown) : [];
-    return Array.isArray(arr) ? (arr.filter((e) => e && typeof e === 'object' && 'id' in e && 'character' in e) as SaveEntry[]) : [];
+    return Array.isArray(arr)
+      ? (arr.filter((e) => e && typeof e === 'object' && 'id' in e && 'character' in e) as SaveEntry[])
+      : [];
   } catch {
     return [];
   }
@@ -52,7 +54,13 @@ function writeSaves(entries: SaveEntry[]): void {
 }
 
 export function addSave(name: string, character: Character, thumb: string | null): SaveEntry {
-  const entry: SaveEntry = { id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, name, savedAt: Date.now(), thumb, character };
+  const entry: SaveEntry = {
+    id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
+    name,
+    savedAt: Date.now(),
+    thumb,
+    character,
+  };
   writeSaves([entry, ...listSaves()]);
   return entry;
 }

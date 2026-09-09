@@ -31,7 +31,10 @@ export function getBaked(itemId: string): BakedItem | null {
   const b = getBuild(itemId);
   if (!b) return null;
   const item = registry.byId(itemId)!;
-  const out: BakedItem = { parts: b.parts.map((p) => ({ socket: p.socket, object: bakePart(p.object) })), hands: item.hands };
+  const out: BakedItem = {
+    parts: b.parts.map((p) => ({ socket: p.socket, object: bakePart(p.object) })),
+    hands: item.hands,
+  };
   baked.set(itemId, out);
   return out;
 }
@@ -39,7 +42,10 @@ export function getBaked(itemId: string): BakedItem | null {
 export function bakeBuild(key: string, build: ItemBuild, smooth = false): BakedItem {
   const hit = baked.get(key);
   if (hit) return hit;
-  const out: BakedItem = { parts: build.parts.map((p) => ({ socket: p.socket, object: bakePart(p.object, smooth) })), hands: undefined };
+  const out: BakedItem = {
+    parts: build.parts.map((p) => ({ socket: p.socket, object: bakePart(p.object, smooth) })),
+    hands: undefined,
+  };
   baked.set(key, out);
   return out;
 }

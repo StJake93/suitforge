@@ -6,19 +6,19 @@ How to author a library item. Every item in `src/library/<slot>/*.ts` must follo
 
 ```ts
 export interface ItemDefinition {
-  id: string;            // "<slot>.<kebab-name>", unique across the library
+  id: string; // "<slot>.<kebab-name>", unique across the library
   slot: SlotId;
-  name: string;          // ≤ 24 chars, Title Case
-  tags: Tag[];           // ≥ 1, from the vocabulary in §6
-  hands?: 1 | 2;         // weapon only, required for weapon
-  hides?: SlotId[];      // slots not rendered while this item is equipped
+  name: string; // ≤ 24 chars, Title Case
+  tags: Tag[]; // ≥ 1, from the vocabulary in §6
+  hands?: 1 | 2; // weapon only, required for weapon
+  hides?: SlotId[]; // slots not rendered while this item is equipped
   build: (ctx: BuildContext) => ItemBuild;
 }
 
 export interface BuildContext {
-  ref: BodyMetrics;       // the REFERENCE body (male, height 0.5, musculature 0.5); author against this
+  ref: BodyMetrics; // the REFERENCE body (male, height 0.5, musculature 0.5); author against this
   mat: (role: MaterialRole) => THREE.Material; // shared, palette-driven materials — always use this
-  kit: Kit;               // geometry helpers (§5)
+  kit: Kit; // geometry helpers (§5)
 }
 
 export interface ItemBuild {
@@ -27,6 +27,7 @@ export interface ItemBuild {
 ```
 
 Rules:
+
 - `build` is pure: no side effects, no globals, no async, no texture/network loads. It is called once per item and cached; it must run in Node (vitest) as well as the browser, so use `three` classes only, never DOM.
 - Return one part per socket the item attaches to. Paired slots return both sides (§3.3).
 - Never create materials: call `ctx.mat(role)`. This is how palette changes recolour instantly.
@@ -42,36 +43,36 @@ Rules:
 
 Socket origin/axes are defined for the reference body. `scale` describes what the runtime scales along each axis so authors know what stretches.
 
-| Socket | Origin | Axes | Runtime scale |
-|---|---|---|---|
-| `head` | centre of the skull | +Y up, +Z face | uniform: head radius |
-| `neck` | base of the neck (top of shoulders) | +Y up | x,z: neck radius; y: neck length |
-| `chest` | centre of the torso at nipple height | +Y up, +Z front | x: shoulder width; y: torso length; z: chest depth |
-| `back` | same as `chest` but origin on the back surface, +Z points **backward** | | x: shoulder width; y: torso length; z: uniform |
-| `pelvis` | centre of the hips | +Y up | x: hip width; y,z: uniform |
-| `upperArmL/R` | shoulder joint | +Y **down the limb** toward the elbow | y: segment length; x,z: limb radius |
-| `forearmL/R` | elbow joint | +Y down toward the wrist | y: segment length; x,z: limb radius |
-| `handL/R` | wrist joint | +Y toward fingertips, +Z palm-forward | uniform: hand size |
-| `weapon` | right palm grip point | +Y along the weapon's long axis (blade/barrel), +Z away from the palm | uniform: hand size |
-| `thighL/R` | hip joint | +Y down toward the knee | y: length; x,z: radius |
-| `shinL/R` | knee joint | +Y down toward the ankle | y: length; x,z: radius |
-| `footL/R` | ankle joint | +Y **up**, +Z toward toes; the sole is at `y = -REF.footH` | uniform: foot size |
+| Socket        | Origin                                                                 | Axes                                                                  | Runtime scale                                      |
+| ------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------- |
+| `head`        | centre of the skull                                                    | +Y up, +Z face                                                        | uniform: head radius                               |
+| `neck`        | base of the neck (top of shoulders)                                    | +Y up                                                                 | x,z: neck radius; y: neck length                   |
+| `chest`       | centre of the torso at nipple height                                   | +Y up, +Z front                                                       | x: shoulder width; y: torso length; z: chest depth |
+| `back`        | same as `chest` but origin on the back surface, +Z points **backward** |                                                                       | x: shoulder width; y: torso length; z: uniform     |
+| `pelvis`      | centre of the hips                                                     | +Y up                                                                 | x: hip width; y,z: uniform                         |
+| `upperArmL/R` | shoulder joint                                                         | +Y **down the limb** toward the elbow                                 | y: segment length; x,z: limb radius                |
+| `forearmL/R`  | elbow joint                                                            | +Y down toward the wrist                                              | y: segment length; x,z: limb radius                |
+| `handL/R`     | wrist joint                                                            | +Y toward fingertips, +Z palm-forward                                 | uniform: hand size                                 |
+| `weapon`      | right palm grip point                                                  | +Y along the weapon's long axis (blade/barrel), +Z away from the palm | uniform: hand size                                 |
+| `thighL/R`    | hip joint                                                              | +Y down toward the knee                                               | y: length; x,z: radius                             |
+| `shinL/R`     | knee joint                                                             | +Y down toward the ankle                                              | y: length; x,z: radius                             |
+| `footL/R`     | ankle joint                                                            | +Y **up**, +Z toward toes; the sole is at `y = -REF.footH`            | uniform: foot size                                 |
 
 Reference dimensions are exported as `REF` from `src/character/metrics.ts` (e.g. `REF.headRadius`, `REF.forearmLength`) so authors can size parts numerically.
 
 ### 3.1 Which sockets each slot may use
 
-| Slot | Allowed sockets |
-|---|---|
-| helmet, headgear, glasses | `head` |
-| neck | `neck`, `chest` |
-| torso | `chest`, `pelvis`, `neck`, `upperArmL/R` (pauldrons, sleeves), `forearmL/R` (sleeves) |
-| back | `back` |
-| bracers | `forearmL/R` |
-| gloves | `handL/R` |
-| weapon | `weapon` (and optionally `handL` for a foregrip cosmetic) |
-| legs | `pelvis`, `thighL/R`, `shinL/R` |
-| boots | `footL/R`, `shinL/R` (cuffs) |
+| Slot                      | Allowed sockets                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| helmet, headgear, glasses | `head`                                                                                |
+| neck                      | `neck`, `chest`                                                                       |
+| torso                     | `chest`, `pelvis`, `neck`, `upperArmL/R` (pauldrons, sleeves), `forearmL/R` (sleeves) |
+| back                      | `back`                                                                                |
+| bracers                   | `forearmL/R`                                                                          |
+| gloves                    | `handL/R`                                                                             |
+| weapon                    | `weapon` (and optionally `handL` for a foregrip cosmetic)                             |
+| legs                      | `pelvis`, `thighL/R`, `shinL/R`                                                       |
+| boots                     | `footL/R`, `shinL/R` (cuffs)                                                          |
 
 ### 3.2 Weapons
 
@@ -85,16 +86,16 @@ Return both parts. Use `kit.mirror(buildOneSide)`: it builds the right side and 
 
 ## 4. Material roles
 
-| Role | Meaning | Palette-driven |
-|---|---|---|
-| `primary` | main armour plating | yes |
-| `secondary` | undersuit / secondary plating | yes |
-| `accent` | trims, lights, emblems (emissive tint) | yes |
-| `metal` | bare polished metal | no (fixed) |
-| `dark` | rubber, straps, joints | no |
-| `glass` | visors, lenses (transparent) | tint from accent |
-| `glow` | emissive elements | accent, emissive |
-| `skin` | exposed skin (rarely used by items) | body skin tone |
+| Role        | Meaning                                | Palette-driven   |
+| ----------- | -------------------------------------- | ---------------- |
+| `primary`   | main armour plating                    | yes              |
+| `secondary` | undersuit / secondary plating          | yes              |
+| `accent`    | trims, lights, emblems (emissive tint) | yes              |
+| `metal`     | bare polished metal                    | no (fixed)       |
+| `dark`      | rubber, straps, joints                 | no               |
+| `glass`     | visors, lenses (transparent)           | tint from accent |
+| `glow`      | emissive elements                      | accent, emissive |
+| `skin`      | exposed skin (rarely used by items)    | body skin tone   |
 
 Every mesh must use one of these via `ctx.mat(role)`. Roughly: 40–70 % of an item's surface `primary`, 10–30 % `secondary`, ≤ 10 % `accent`/`glow`.
 

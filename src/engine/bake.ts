@@ -15,7 +15,8 @@ function flipWinding(g: BufferGeometry): void {
       const a = attr.array as Float32Array;
       const size = attr.itemSize;
       for (let k = 0; k < size; k++) {
-        const i1 = (i + 1) * size + k, i2 = (i + 2) * size + k;
+        const i1 = (i + 1) * size + k,
+          i2 = (i + 2) * size + k;
         const t = a[i1]!;
         a[i1] = a[i2]!;
         a[i2] = t;
@@ -37,7 +38,8 @@ export function bakePart(root: Object3D, smooth = false): Object3D {
     let g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone();
     g = g.clone();
     // drop attributes that differ between geometries so merge succeeds
-    for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'normal' && name !== 'uv') g.deleteAttribute(name);
+    for (const name of Object.keys(g.attributes))
+      if (name !== 'position' && name !== 'normal' && name !== 'uv') g.deleteAttribute(name);
     if (!g.getAttribute('uv')) g.setAttribute('uv', g.getAttribute('position').clone());
     g.applyMatrix4(m.matrixWorld);
     if (m.matrixWorld.determinant() < 0) flipWinding(g);

@@ -66,47 +66,111 @@ export function TopBar() {
           onBlur={() => draft.trim() && setName(draft.trim())}
           onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
         />
-        <button className="icon-btn sm" aria-label="Random name" title="Random name (N)" disabled={nameLocked} onClick={rollName} data-testid="roll-name">
+        <button
+          className="icon-btn sm"
+          aria-label="Random name"
+          title="Random name (N)"
+          disabled={nameLocked}
+          onClick={rollName}
+          data-testid="roll-name"
+        >
           <I.dice />
         </button>
-        <button className={`icon-btn sm${nameLocked ? ' locked' : ''}`} aria-label={nameLocked ? 'Unlock name' : 'Lock name'} aria-pressed={nameLocked} onClick={() => toggleLock('name')}>
+        <button
+          className={`icon-btn sm${nameLocked ? ' locked' : ''}`}
+          aria-label={nameLocked ? 'Unlock name' : 'Lock name'}
+          aria-pressed={nameLocked}
+          onClick={() => toggleLock('name')}
+        >
           {nameLocked ? <I.lock /> : <I.unlock />}
         </button>
       </label>
       <div style={{ position: 'relative' }}>
-        <button className="chip" style={{ height: 34, ['--cat' as never]: cat?.colour }} aria-haspopup="dialog" aria-expanded={powerOpen} onPointerDown={(e) => e.stopPropagation()} onClick={() => setPowerOpen(!powerOpen)} data-testid="power-chip">
+        <button
+          className="chip"
+          style={{ height: 34, ['--cat' as never]: cat?.colour }}
+          aria-haspopup="dialog"
+          aria-expanded={powerOpen}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => setPowerOpen(!powerOpen)}
+          data-testid="power-chip"
+        >
           <I.bolt width={16} height={16} style={{ color: cat?.colour ?? 'currentColor' }} />
-          {cat ? `${cat.label}${powerSet.powers.length ? ` · ${powerSet.powers.join(', ')}` : ''}` : 'Choose power set'}
+          {cat
+            ? `${cat.label}${powerSet.powers.length ? ` · ${powerSet.powers.join(', ')}` : ''}`
+            : 'Choose power set'}
         </button>
       </div>
       {powerOpen && <PowerPopover onClose={() => setPowerOpen(false)} />}
       <div className="spacer" />
       <div className="group">
-        <button className="icon-btn" aria-label="Undo" title="Undo (⌘Z)" disabled={!undoOk} onClick={undo} data-testid="undo">
+        <button
+          className="icon-btn"
+          aria-label="Undo"
+          title="Undo (⌘Z)"
+          disabled={!undoOk}
+          onClick={undo}
+          data-testid="undo"
+        >
           <I.undo />
         </button>
-        <button className="icon-btn" aria-label="Redo" title="Redo (⇧⌘Z)" disabled={!redoOk} onClick={redo} data-testid="redo">
+        <button
+          className="icon-btn"
+          aria-label="Redo"
+          title="Redo (⇧⌘Z)"
+          disabled={!redoOk}
+          onClick={redo}
+          data-testid="redo"
+        >
           <I.redo />
         </button>
       </div>
       <div className="divider" />
-      <button className="btn primary" onClick={randomiseAll} title="Randomise everything unlocked (R)" data-testid="randomise">
+      <button
+        className="btn primary"
+        onClick={randomiseAll}
+        title="Randomise everything unlocked (R)"
+        data-testid="randomise"
+      >
         <I.dice /> Randomise
       </button>
       <div className="divider hide-tablet" />
       <div className="group hide-tablet">
-        <button className="icon-btn" aria-label="Saved heroes" title="Save / load" onClick={() => setUi({ savesOpen: true })} data-testid="open-saves">
+        <button
+          className="icon-btn"
+          aria-label="Saved heroes"
+          title="Save / load"
+          onClick={() => setUi({ savesOpen: true })}
+          data-testid="open-saves"
+        >
           <I.save />
         </button>
-        <button className="icon-btn" aria-label="Copy share link" title="Copy share link" onClick={share} data-testid="share">
+        <button
+          className="icon-btn"
+          aria-label="Copy share link"
+          title="Copy share link"
+          onClick={share}
+          data-testid="share"
+        >
           <I.share />
         </button>
         <div ref={exportRef} style={{ position: 'relative' }}>
-          <button className="icon-btn" aria-label="Export PNG" title="Export PNG" aria-haspopup="menu" aria-expanded={exportOpen} onClick={() => setExportOpen(!exportOpen)}>
+          <button
+            className="icon-btn"
+            aria-label="Export PNG"
+            title="Export PNG"
+            aria-haspopup="menu"
+            aria-expanded={exportOpen}
+            onClick={() => setExportOpen(!exportOpen)}
+          >
             <I.camera />
           </button>
           {exportOpen && (
-            <div className="popover" role="menu" style={{ top: 40, right: 0, width: 220, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div
+              className="popover"
+              role="menu"
+              style={{ top: 40, right: 0, width: 220, display: 'flex', flexDirection: 'column', gap: 4 }}
+            >
               <button className="btn" role="menuitem" onClick={() => doExport(false)}>
                 <I.camera /> PNG with background
               </button>

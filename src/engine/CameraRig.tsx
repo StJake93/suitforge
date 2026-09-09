@@ -16,7 +16,10 @@ export function CameraRig() {
   const ref = useRef<CameraControls>(null);
   const activeSlot = useStore((s) => s.ui.activeSlot);
   const nonce = useStore((s) => s.ui.cameraNonce);
-  const reduced = useMemo(() => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches, []);
+  const reduced = useMemo(
+    () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches,
+    [],
+  );
   const first = useRef(true);
 
   useEffect(() => {

@@ -30,7 +30,9 @@ export const ALL_ITEMS: ItemDefinition[] = [
 ];
 
 const byIdMap = new Map(ALL_ITEMS.map((i) => [i.id, i]));
-const bySlotMap = new Map<SlotId, ItemDefinition[]>(SLOT_IDS.map((s) => [s, ALL_ITEMS.filter((i) => i.slot === s)]));
+const bySlotMap = new Map<SlotId, ItemDefinition[]>(
+  SLOT_IDS.map((s) => [s, ALL_ITEMS.filter((i) => i.slot === s)]),
+);
 
 export const registry = {
   all: ALL_ITEMS,

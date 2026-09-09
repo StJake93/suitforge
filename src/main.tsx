@@ -28,7 +28,10 @@ if (!webgl2()) {
     <div className="fallback">
       <div>
         <h1>SuitForge needs WebGL 2</h1>
-        <p>Your browser or device could not start a 3D context. Try the latest Chrome, Edge, Firefox or Safari with hardware acceleration enabled.</p>
+        <p>
+          Your browser or device could not start a 3D context. Try the latest Chrome, Edge, Firefox or Safari
+          with hardware acceleration enabled.
+        </p>
       </div>
     </div>,
   );

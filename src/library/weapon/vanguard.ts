@@ -18,7 +18,14 @@ export const vanguard: ItemDefinition[] = [
       const foregrip = kit.at(kit.mesh(kit.rbox(0.035, 0.07, 0.05, 0.01), 'dark'), 0, 0.3, -0.005);
       const cell = kit.at(kit.mesh(kit.rbox(0.045, 0.16, 0.05, 0.01), 'glow'), 0, 0.28, 0.13);
       const sight = kit.at(kit.mesh(kit.box(0.02, 0.14, 0.03), 'dark'), 0, 0.42, 0.14);
-      return { parts: [{ socket: 'weapon', object: kit.group(receiver, barrel, muzzle, stock, grip, foregrip, cell, sight) }] };
+      return {
+        parts: [
+          {
+            socket: 'weapon',
+            object: kit.group(receiver, barrel, muzzle, stock, grip, foregrip, cell, sight),
+          },
+        ],
+      };
     },
   },
   {

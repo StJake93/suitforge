@@ -15,7 +15,7 @@ export function SlotRail() {
   const hidden = hiddenSlots(loadout);
 
   return (
-    <nav className="rail panel" aria-label="Equipment slots" data-testid="slot-rail">
+    <nav className="rail panel" aria-label="Equipment slots" data-testid="rail">
       <div className="rail-list" role="list">
         {slotList().map((meta) => {
           const id = loadout[meta.id];
@@ -24,7 +24,12 @@ export function SlotRail() {
           const locked = locks.has(meta.id);
           const hiddenBy = hidden.get(meta.id);
           return (
-            <div key={meta.id} role="listitem" className={`slot-row${active ? ' active' : ''}${locked ? ' locked' : ''}`} data-testid={`slot-${meta.id}`}>
+            <div
+              key={meta.id}
+              role="listitem"
+              className={`slot-row${active ? ' active' : ''}${locked ? ' locked' : ''}`}
+              data-testid={`slot-${meta.id}`}
+            >
               <button
                 className="slot-main"
                 aria-pressed={active}
@@ -36,18 +41,39 @@ export function SlotRail() {
                   <SlotGlyph slot={meta.id} />
                 </span>
                 <span className="slot-label">{meta.label}</span>
-                <span className={`slot-item${item ? '' : ' none'}${hiddenBy ? ' hidden-by' : ''}`} title={hiddenBy ? `Hidden by ${SLOTS[hiddenBy].label}` : undefined}>
+                <span
+                  className={`slot-item${item ? '' : ' none'}${hiddenBy ? ' hidden-by' : ''}`}
+                  title={hiddenBy ? `Hidden by ${SLOTS[hiddenBy].label}` : undefined}
+                >
                   {item ? item.name : 'None'}
                 </span>
               </button>
               <div className="slot-actions">
-                <button className={`icon-btn sm${locked ? ' locked' : ''}`} aria-label={locked ? `Unlock ${meta.label}` : `Lock ${meta.label}`} aria-pressed={locked} title={locked ? 'Unlock (L)' : 'Lock (L)'} onClick={() => toggleLock(meta.id)}>
+                <button
+                  className={`icon-btn sm${locked ? ' locked' : ''}`}
+                  aria-label={locked ? `Unlock ${meta.label}` : `Lock ${meta.label}`}
+                  aria-pressed={locked}
+                  title={locked ? 'Unlock (L)' : 'Lock (L)'}
+                  onClick={() => toggleLock(meta.id)}
+                >
                   {locked ? <I.lock /> : <I.unlock />}
                 </button>
-                <button className="icon-btn sm" aria-label={`Randomise ${meta.label}`} title="Randomise (Shift+R)" disabled={locked} onClick={() => randomiseSlot(meta.id)}>
+                <button
+                  className="icon-btn sm"
+                  aria-label={`Randomise ${meta.label}`}
+                  title="Randomise (Shift+R)"
+                  disabled={locked}
+                  onClick={() => randomiseSlot(meta.id)}
+                >
                   <I.dice />
                 </button>
-                <button className="icon-btn sm" aria-label={`Clear ${meta.label}`} title="Clear (Backspace)" disabled={!meta.allowEmpty || id === null} onClick={() => equip(meta.id, null)}>
+                <button
+                  className="icon-btn sm"
+                  aria-label={`Clear ${meta.label}`}
+                  title="Clear (Backspace)"
+                  disabled={!meta.allowEmpty || id === null}
+                  onClick={() => equip(meta.id, null)}
+                >
                   <I.x />
                 </button>
               </div>
