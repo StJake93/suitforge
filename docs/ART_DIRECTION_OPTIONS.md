@@ -1,64 +1,58 @@
-# Art direction options — assessment (2026-09-09)
+# Art direction options — assessment v2 (2026-09-09)
 
 Status: **proposal, not locked**. Jake picks a direction; the chosen option then becomes a SPEC change PR.
 
-Context: the mechanics work but the current presentation (grey-blue glass panels, small rail, flat procedural look) is hurting the fun factor. Three directions were assessed. Effort figures are order-of-magnitude, in focused hours; "agent" means the current agentic team can do it unattended against the spec, "human" means it needs an artist or purchased assets.
+v2 adds Option D after reviewing Human Atlas, Boomba Rally, PlayCanvas, Higgsfield and ElevenLabs, and re-checking what 2026 image-to-3D generators actually deliver. The v1 options (A hand-modelled realistic, B presentation polish, C 16-bit) are kept below for reference.
 
-## Option A — Realistic (Destiny 2 fidelity)
+## What the references actually tell us
 
-What "realistic" actually requires: sculpted high-poly assets baked to game meshes (20–60 k tris each) with 2–4 K PBR texture sets (albedo, normal, roughness, metal, emissive), a proper skinned body with morph targets for height and musculature, skin subsurface shading, hair, cloth, HDRI lighting and post-processing (TAA, bloom, SSAO). On the web that also means Draco/meshopt compression, KTX2 textures, LODs and per-slot streaming so a 106-item library does not weigh hundreds of megabytes.
+- **Human Atlas** (React + three.js + Vite) renders a CC-BY anatomy dataset (BodyParts3D, 2.3 M triangles simplified, 2,234 selectable structures). The fidelity comes from a pre-existing high-quality dataset, not from modelling; the engineering trick is one merged mesh with per-structure visibility and selection driven by GPU textures. For us the lesson is the presentation: a neutral display mannequin with parts that toggle and explode cleanly. We do not need their visibility trick at 11 slots × a few sub-parts each.
+- **Boomba Rally** is a robot-vacuum kart game by Overflow Studio. Its "16 hours" is a statement about scope and tooling (PlayCanvas editor, AI-generated assets, AI audio), not about asset fidelity: the racers are simple hard-surface objects with good lighting and post. That is exactly the asset class that AI 3D generation is best at, and armour is the same class.
+- **PlayCanvas** is a full engine + browser editor with first-class glTF/PBR, WebGPU and Gaussian splats. Nothing in it raises our fidelity ceiling over three.js: PBR, glTF, KTX2, HDRI lighting and post are equivalent. Its editor helps when you are building levels; our scene is one mannequin on a platform. Switching would cost a rewrite for no visual gain. Keep react-three-fiber.
+- **Higgsfield** bundles image generation (Nano Banana Pro, GPT Image), Tripo-based image-to-3D (`image_to_3d`, `multi_image_to_3d`, PBR maps, humanoid auto-rigging, 100–300 k target polycount, symmetry enforcement) and a scene tool (3D Jutsu, GLB export). Its value to us is one account and one API for concept images plus 3D generation. Meshy and Tripo direct APIs do the same 3D step cheaper (Tripo ≈ $0.15–0.35 per generation, Meshy ≈ $0.75–1.20) with more control.
+- **ElevenLabs** is voice and sound. Useful for polish (a name-reveal announcer, UI sounds), irrelevant to fidelity.
 
-The structural cost is bigger than the art cost. Realistic gear cannot use our socket-scale trick; it must be **skinned to the body rig and carry the same morph targets** as the body so height and musculature deform it. That is a re-architecture of body variation and of the asset contract, and every item must be modelled on the base body and morph-transferred.
+## Option D — AI-generated realistic parts on a display mannequin
 
-| Work                                                                                      | Who                                                                                     | Hours                                      |
-| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------ |
-| Base body (male/female), rig, height/muscle morphs, skin shader                           | human + agent                                                                           | 60–100                                     |
-| Engine: GLTF/KTX2 pipeline, skinning + morphs on items, LOD/streaming, post FX            | agent                                                                                   | 60–100                                     |
-| Blender pipeline: template .blend with body + sockets, headless export/validate script    | agent                                                                                   | 20–30                                      |
-| 106 items modelled, textured, fitted, morph-transferred                                   | human (2–6 h each); AI-mesh (Meshy/Tripo) + cleanup roughly halves it with quality risk | 300–600                                    |
-| Purchased modular kits instead of modelling: fitting/re-topology per item, licence review | human                                                                                   | 100–200 (+ licence cost, consistency risk) |
-| **Total**                                                                                 |                                                                                         | **≈ 500–900**                              |
+The realism you are describing is achievable at "well-lit, game-ready hard-surface asset" quality, and a display mannequin sidesteps the hardest realism problem (skin, hair, faces). Iron Man-*like* is reachable; a true likeness is a trademark problem, not a technical one.
 
-Blender hookup: yes, this route needs it. Headless `blender --background --python` with a template scene is the lightweight version; agents can drive export/validation but not the sculpting and texturing that produce realism. Procedural code (ours or Blender geometry nodes) cannot deliver Destiny-grade surfaces.
+**Body.** A realistic base mesh from Blender Studio's CC0 Human Base Meshes (male and female), rendered as a matte display mannequin with a skin-tone tint and no facial realism. Height and musculature become two shape keys authored in Blender (agent-scriptable: proportional bone scaling and a "heavy" sculpt pass) and exported as glTF morph targets. Socket transforms are computed in Blender per morph extreme and interpolated at runtime, replacing the hand-written metrics maths with data. Gear stays rigid and fits via socket scale exactly as now; rigid PBR parts tolerate the ±15 % non-uniform scale our bodies need.
 
-Verdict: highest ceiling, roughly ten times the cost of the other options, and the bulk of the cost is not agent-addressable.
+**Items.** Per item: a concept image in a locked hard-surface style (front + ¾ views on neutral background, symmetry enforced) → image-to-3D with PBR → headless Blender clean-up script (centre pivot on the socket origin, symmetrise, decimate to ≤ 15 k triangles, bake textures to 1 K KTX2, export GLB with socket naming) → the existing `validate.ts` extended for GLB (envelope, triangle budget, material roles). Three candidates per item, a human picks one. Palette recolouring on AI textures needs a mask: cluster the albedo into primary/secondary/accent regions (k-means, agent script) and recolour through the mask. This works well on flat-regioned hard-surface textures and is the main technical risk.
 
-## Option B — Keep 3D, Destiny-inspired presentation + material polish
+**Presentation.** The Destiny-style layout from Option B, a bundled 1 K studio HDRI (Poly Haven, CC0), SSAO, bloom, ACES, contact shadow, and an exploded-view toggle that slides each part out along its socket normal. Exploded view is trivial with rigid parts.
 
-The Destiny screens are mostly **presentation**: character centred with lots of negative space, gear tiles in two columns flanking the body (weapons left, armour right), a hero number, item tiles with rarity borders and rendered icons, hover-driven detail panels, monochrome iconography, subtle geometric decor, no boxed panels. None of that depends on asset fidelity, and our engine already renders per-item thumbnails.
+**Known quality limits** (what it will look like up close): soft edges on some hard-surface pieces, mushy sub-centimetre detail (rivets, vents), occasional baked-lighting artefacts in albedo, and stylistic drift between items unless the concept prompts are strict. At full-body and thumbnail distance it reads as a real game asset. It is not Destiny 2 hero-render quality (100 k-triangle sculpts, 4 K hand-authored materials).
 
-| Work                                                                                                                                                                                     | Who   | Hours        |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------ |
-| UI rework: flanking slot tiles, hover detail panel, identity/body/colour as tabs, typography and iconography pass, motion                                                                | agent | 40–80        |
-| Visual polish on the existing 3D: studio three-point lighting + HDRI-style environment, bloom/SSAO/vignette post, fix z-fighting and breathing shimmer, camera framing, body proportions | agent | 20–40        |
-| Material upgrade without re-authoring: bevel shading, procedural trim/wear detail via triplanar shader, decals, better metal/glass                                                       | agent | 20–40        |
-| **Total**                                                                                                                                                                                |       | **≈ 80–160** |
+| Work | Who | Hours |
+|---|---|---|
+| Engine: GLTF/KTX2/meshopt loading, morph-target body + data-driven sockets, mask-based palette, HDRI + post, exploded view, GLB thumbnails | agent | 60–90 |
+| Blender pipeline: template scene, clean-up/export script, morph authoring, GLB validation | agent | 20–30 |
+| Base mannequin (male/female, two shape keys, mannequin material) | agent + review | 15–25 |
+| 106 items: concept (10 min) + generation (10 min) + pick, fit, clean-up (30–45 min) | agent, human approves picks | 90–130 |
+| Destiny-style UI rework (from Option B) | agent | 40–60 |
+| Generation credits (≈ 3 candidates × 106 items + retries) | — | ≈ $300–600 |
+| **Total** | | **≈ 230–330 h** |
 
-Verdict: reaches perhaps 60 % of the reference feel at 10–15 % of Option A's cost, keeps every mechanic and the whole library, and attacks the stated problem (the UI) directly.
+That is roughly a third of Option A (hand modelling with morph-skinned gear) and about twice Option C1 (16-bit). The saving over A comes from two decisions: gear stays rigid (no skinning, no morph transfer), and generation replaces modelling and texturing.
 
-## Option C — Stylised modern-retro 16-bit
+## Recommendation (v2)
 
-Two very different routes.
+1. **Run a two-week proof of concept for Option D before committing the library**: mannequin with morphs, five items through the full pipeline (helmet, chest plate, gauntlet, boots, rifle), Destiny-style framing, HDRI and post, exploded view. Budget ≈ 50 h and ≈ $60 credits. Judge it against a reference image you pick now, at three distances: thumbnail, full body, and the drawer-zoom close-up.
+2. **Decision gate.** If the PoC clears the bar, replace SPEC §2/§5 art clauses and the asset contract with the GLB pipeline and run the library through it. If it does not, fall back to **C1 (16-bit via 3D-to-pixel rendering)**, which reuses the entire current library and engine and is the cheapest true pivot.
+3. Either way, keep react-three-fiber. Use Meshy or Tripo directly for generation unless you already pay for Higgsfield, in which case its bundled image + 3D API is fine. Use ElevenLabs only for a polish pass.
 
-**C1. Render the existing 3D as pixel art.** Keep the engine, the library, sliders, turntable and zoom; add a pixel post-pipeline: render at ¼ resolution to a target, quantise to a 32–64 colour palette, 1-px outlines from depth/normal edges, cel-banded lighting with fixed light angles, optional dithering, nearest-neighbour upscale, rotation snapped to 8 or 16 facings, UI redone with a pixel font and chunky panels. Our chunky flat-shaded procedural items suit this well (this is how Dead Cells and similar titles get consistent sprites).
+## v1 options (for reference)
 
-| Work                                                                               | Who   | Hours        |
-| ---------------------------------------------------------------------------------- | ----- | ------------ |
-| Pixel render pipeline (low-res target, palette quantise, outline, cel light, snap) | agent | 30–50        |
-| Pixel-style UI (fonts, panels, tiles, motion)                                      | agent | 30–50        |
-| Item silhouette pass so everything reads at 64–96 px                               | agent | 20–40        |
-| **Total**                                                                          |       | **≈ 80–140** |
+### Option A — Hand-modelled realistic (Destiny 2 fidelity)
+Sculpted high-poly assets baked to game meshes with 2–4 K PBR sets, skinned body with morph targets, gear skinned and morph-transferred, KTX2/Draco streaming. 500–900 h, most of it artist time; a Blender pipeline only pays off here.
 
-Risk: it can read as "3D with a filter" unless silhouettes, palettes and facings are designed for it; the silhouette pass and snapping mitigate most of that.
+### Option B — Keep the current 3D, Destiny-style presentation + polish
+Flanking gear tiles, hover detail, negative space, studio lighting, post, material upgrade without re-authoring. 80–160 h. Reaches perhaps 60 % of the reference *feel* but cannot escape the chunky procedural look; folded into Option D's UI work.
 
-**C2. Hand-drawn sprites.** Sliders do not exist in pixel art, so height and musculature become a handful of discrete bodies. Even with 2 bodies × 4 facings × 106 items that is 848 sprites at 30–60 min each: 400–800 hours, and AI generators cannot keep facings consistent (the Fridge Raiders lesson). Not recommended.
-
-## Recommendation
-
-1. **Do Option B first**, UI rework and 3D polish, as a two-week agent sprint. It targets the actual complaint, preserves all mechanics and the library, and is cheap enough to throw away if you later change direction.
-2. **Then decide** with the polished build in hand. If the look still is not fun, **C1 is the cheapest true art-direction pivot** and keeps everything you have built.
-3. **Treat Option A as a separate product decision**, not a refinement: it needs artists or purchased assets and a body-variation re-architecture. A Blender pipeline only pays off on that route (or later, for a few hand-modelled hero pieces mixed into the procedural library).
+### Option C — Stylised modern-retro 16-bit
+C1 renders the existing 3D as pixel art (low-res target, palette quantise, outlines, cel light, snapped facings): 80–140 h, keeps everything. C2 hand-drawn sprites: 400–800 h, sliders become discrete bodies, generators cannot keep facings consistent. C2 not recommended.
 
 ## Note on the breathing "aliasing"
 
-The shimmer in the recording is not texture aliasing. Consecutive frames show hatched patterns on coplanar faces (boot toe caps against soles, gauntlet plates, undersuit sleeve against bracer cuff) that change as the idle bob moves the model a few millimetres: classic **z-fighting**. Contributing factors: the camera near plane at 0.05 m with a far plane of 60 m (poor depth precision), authored items with faces at exactly the same offset as neighbouring parts, and thin dark straps rendered without depth bias. Fixes are cheap (near plane 0.15, logarithmic depth buffer or polygon offset on secondary layers, an authoring rule of ≥ 3 mm clearance between stacked plates) and belong to the polish pass in Option B.
+The shimmer in the recording is z-fighting, not texture aliasing: consecutive frames show hatched patterns on coplanar faces (boot toe caps against soles, gauntlet plates, sleeve against bracer cuff) that change as the idle bob moves the model a few millimetres. Contributing factors: near plane 0.05 m against far plane 60 m, faces at identical offsets between stacked parts, thin dark straps without depth bias. Fixes are cheap (near plane 0.15, logarithmic depth or polygon offset, a 3 mm clearance rule) and belong to whichever pass you choose. Option D removes most of it anyway because generated parts are single meshes.
